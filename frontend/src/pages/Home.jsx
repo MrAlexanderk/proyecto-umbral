@@ -33,7 +33,7 @@ const Home = () => {
           <h2 className="text-crimson text-lg mb-4 text-gray-custom">
             Where the Cursed Finds a New Home
           </h2>
-          <p className="text-crimson text-md text-white-custom paragraph-narrow">
+          <p className="text-crimson text-md text-white-custom paragraph-narrow hero-text">
             <b>El Umbral</b> is the first marketplace where cursed objects, haunted heirlooms, and paranormal relics await a new keeper. <br />Step beyond the ordinary and browse artifacts that whisper, watch, and sometimes... follow. <br />
             Dare to collect the unexplainable — each item comes with its own chilling tale. <br />
             <strong>Buy at your own peril. Sell at your own risk.</strong>
@@ -41,7 +41,7 @@ const Home = () => {
         </Container>
       </div>
 
-      <section className="search-section py-5 bg-color-dark">
+      <section className="search-section bg-color-dark">
         <Container className="text-center text-white-custom">
             <h2 className="text-spectral mb-4">Which artifact seeks a new keeper?</h2>
             <div className="search-input-wrapper">
@@ -55,7 +55,7 @@ const Home = () => {
         </Container>
       </section>
 
-      <section className="category-section py-5 bg-color-dark">
+      <section className="category-section bg-color-dark">
         <Container>
             <Row className="g-2">
                 {categories.map((cat, index) => (

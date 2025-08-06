@@ -37,14 +37,14 @@
 
 .hero-text {
     text-align: center;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     line-height: 1.5;
 }
 
 .search-section {
-  padding: 3rem 1rem;
   text-align: center;
+  padding: 5rem 0rem 1rem 0rem;
 }
 
 .search-section h2 {
@@ -54,7 +54,7 @@
 /* Contenedor del input con icono */
 .search-input-wrapper {
   position: relative;
-  max-width: 500px;
+  max-width: 98%;
   margin: 0 auto;
 }
 
@@ -81,4 +81,8 @@
   color: var(--color-gray);
   pointer-events: none;
   font-size: 1.2rem;
+}
+
+.category-section{
+    padding: 0rem 0rem 10rem 0rem;
 }
