@@ -1,0 +1,41 @@
+.hero-section {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pseudo-elemento con imagen + tinte rojo y filtros */
+.hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    /* Capa de fondo con imagen */
+    background-image:
+        linear-gradient(rgba(180, 20, 20, 0.15), rgba(180, 20, 20, 0.15)), /* tinte rojo */
+        url('../assets/hero.jpg'); /* imagen */
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    filter: blur(5px) brightness(0.7) contrast(1.4) hue-rotate(-15deg) saturate(1.5);
+    transform: scale(1.05);
+    z-index: 0;
+}
+
+/* Contenido encima de imagen + tinte */
+.hero-section > .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text {
+    text-align: left;
+    max-width: 720px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
