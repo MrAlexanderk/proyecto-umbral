@@ -38,3 +38,9 @@
 .text-gray-custom {
   color: var(--color-gray);
 }
+
+
+
+.bg-color-dark {
+    background-color: var(--color-background);
+}

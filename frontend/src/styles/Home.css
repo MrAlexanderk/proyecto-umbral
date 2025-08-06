@@ -42,10 +42,7 @@
     line-height: 1.5;
 }
 
-
-
 .search-section {
-  background-color: var(--color-background);
   padding: 3rem 1rem;
   text-align: center;
 }

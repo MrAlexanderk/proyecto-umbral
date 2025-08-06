@@ -17,4 +17,8 @@
 
   /* Backgrounds */
   --color-background: #15010B; /* Fondo oscuro */
+
+  /* Botones */
+  --color-button-dark: #1e1e1e; /* Botones oscuros */
+  --color-button-dark-hover: #2e2e2e; /* Hover botones oscuros */
 }
