@@ -1,6 +1,6 @@
 :root {
   /* Fonts */
-  --font-primary: 'Spectral SC', serif;   /* usa 'Spectral SC' que cargaste en HTML */
+  --font-primary: 'Spectral SC', serif;
   --font-secondary: 'Crimson Pro', serif;
 
   /* Font Sizes */
@@ -17,7 +17,6 @@
   /* Backgrounds */
   --color-background: #15010B; /* Fondo oscuro */
   --color-navbar: #221217f3;
-  /*--color-navbar: rgba(43, 15, 23, 0.95);*/ /* Navbar con transparencia */
   
   /* Botones */
   --color-button-dark: #1e1e1e; /* Botones oscuros */

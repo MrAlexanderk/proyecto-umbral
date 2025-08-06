@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import '../../styles/Buttons.css';
 
-
 const PrimaryButton = ({ to, children, ...props }) => {
   return (
     <NavLink 
