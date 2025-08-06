@@ -1,0 +1,40 @@
+@import './variables.css';
+
+/* Typography 16px based*/
+
+.text-spectral {
+  font-family: var(--font-primary);
+}
+
+.text-crimson {
+  font-family: var(--font-secondar);
+}
+
+.text-xl {
+  font-size: var(--font-size-xl); /* 54px */
+}
+
+.text-lg {
+  font-size: var(--font-size-lg); /* 42px */
+}
+
+.text-md {
+  font-size: var(--font-size-md); /* 24px */
+}
+
+.text-s {
+  font-size: var(--font-size-s); /* 16px */
+}
+
+.text-xs {
+  font-size: var(--font-size-xs); /* 14px */
+}
+
+
+.text-white-custom {
+  color: var(--color-white);
+}
+
+.text-gray-custom {
+  color: var(--color-gray);
+}

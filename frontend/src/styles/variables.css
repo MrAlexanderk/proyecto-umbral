@@ -1,0 +1,20 @@
+:root {
+  /* Fonts */
+  --font-primary: 'Spectral SC', serif;   /* usa 'Spectral SC' que cargaste en HTML */
+  --font-secondary: 'Crimson Pro', serif;
+
+  /* Font Sizes */
+  --font-size-xl: 3.375rem; /* 54px */
+  --font-size-lg: 2.625rem; /* 42px */
+  --font-size-md: 1.5rem;   /* 24px */
+  --font-size-s: 1rem;    /* 16px */
+  --font-size-xs: 0.875rem; /* 14px */
+
+  /* Colors */
+  --color-white: #ffffff;
+  --color-gray: #919191;
+
+
+  /* Backgrounds */
+  --color-background: #15010B; /* Fondo oscuro */
+}
