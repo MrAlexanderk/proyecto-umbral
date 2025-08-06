@@ -22,4 +22,7 @@
   /* Botones */
   --color-button-dark: #1e1e1e; /* Botones oscuros */
   --color-button-dark-hover: #2e2e2e; /* Hover botones oscuros */
+
+  --color-button-primary: #AD1D45; /* Botones primarios */
+  --color-button-primary-hover: #ad264d; /* Hover botones oscuros */
 }

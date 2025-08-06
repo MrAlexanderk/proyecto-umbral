@@ -2,6 +2,8 @@ import { NavLink } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 import '../styles/Navbar.css';
 import logo from '../assets/logo.png';
+import PrimaryButton from './buttons/PrimaryButton';
+import SecondaryButton from './buttons/SecondaryButton';
 
 const Navbar = () => {
   return (
@@ -32,6 +34,8 @@ const Navbar = () => {
             <NavLink className="nav-link" to="/cart">
               <FaShoppingCart size={18} />
             </NavLink>
+            <SecondaryButton as={NavLink} to="/login">Log In</SecondaryButton>
+            <PrimaryButton as={NavLink} to="/signup">Sign Up</PrimaryButton>
           </div>
         </div>
       </div>

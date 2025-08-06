@@ -40,3 +40,11 @@
     margin-right: 10px;
     padding: 0;
 }
+
+.navbar-brand.logo,
+.navbar-brand.logo:visited,
+.navbar-brand.logo:focus,
+.navbar-brand.logo:active {
+  color: var(--color-white) !important;
+  text-decoration: none !important;
+}
