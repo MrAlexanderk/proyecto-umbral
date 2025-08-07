@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Form, FormCheck } from 'react-bootstrap';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { UserContext } from '../context/UserContext';
 import '../styles/SignUp.css';
 import '../styles/Buttons.css';
 
@@ -11,6 +12,7 @@ const MySwal = withReactContent(Swal);
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { register } = useContext(UserContext);
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -39,27 +41,41 @@ const SignUp = () => {
     doPasswordsMatch &&
     allChecks;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!allValid) return;
 
-    MySwal.fire({
-    title: "Registration successful!",
-    text: `The Threshold acknowledges your vows, ${username}.`,
-    icon: "success",
-    timer: 2000,
-    showConfirmButton: false,
-    customClass: {
-        popup: 'umbral-popup',
-        title: 'umbral-title',
-        content: 'umbral-text',
-        icon: 'umbral-icon'
-    },
-    timerProgressBar: true,
-    }).then(() => {
-        navigate('/');
-    });;
+    try {
+      // Llamas al register del context con los datos que quieras pasar (email y password mínimo)
+      await register({ email, password });
+
+      // Luego muestras el Swal de éxito
+      await MySwal.fire({
+        title: "Registration successful!",
+        text: `The Threshold acknowledges your vows, ${username}.`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: {
+          popup: 'umbral-popup',
+          title: 'umbral-title',
+          content: 'umbral-text',
+          icon: 'umbral-icon'
+        },
+        timerProgressBar: true,
+      });
+
+      // Después navegas al home o login
+      navigate('/');
+    } catch (error) {
+      // En caso de error muestras mensaje con Swal
+      MySwal.fire({
+        title: "Registration failed",
+        text: error.message || "An error occurred during registration.",
+        icon: "error",
+      });
+    }
   };
 
   return (
