@@ -1,36 +1,66 @@
 import { useState } from 'react';
 import { Form, FormCheck } from 'react-bootstrap';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import '../styles/SignUp.css';
 import '../styles/Buttons.css';
-import { Link } from 'react-router-dom';
+
+const MySwal = withReactContent(Swal);
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState('');
-  const [usernameTouched, setUsernameTouched] = useState(false);
-
   const [email, setEmail] = useState('');
-  const [emailTouched, setEmailTouched] = useState(false);
-
   const [password, setPassword] = useState('');
-  const [passwordTouched, setPasswordTouched] = useState(false);
-
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
-
   const [checks, setChecks] = useState({ one: false, two: false, three: false });
-  const [checksTouched, setChecksTouched] = useState(false);
+
+  const [touched, setTouched] = useState({
+    username: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    checks: false,
+  });
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isStrongPassword = (pass) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(pass);
   const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
+
+  const allChecks = Object.values(checks).every(Boolean);
 
   const allValid =
     username &&
     isValidEmail(email) &&
     isStrongPassword(password) &&
     doPasswordsMatch &&
-    Object.values(checks).every(Boolean);
+    allChecks;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!allValid) return;
+
+    MySwal.fire({
+    title: "Registration successful!",
+    text: `The Threshold acknowledges your vows, ${username}.`,
+    icon: "success",
+    timer: 2000,
+    showConfirmButton: false,
+    customClass: {
+        popup: 'umbral-popup',
+        title: 'umbral-title',
+        content: 'umbral-text',
+        icon: 'umbral-icon'
+    },
+    timerProgressBar: true,
+    }).then(() => {
+        navigate('/');
+    });;
+  };
 
   return (
     <div className="signup-container">
@@ -38,9 +68,7 @@ const SignUp = () => {
         <h1 className="text-white-custom text-xl text-spectral">Join el umbral</h1>
         <p className="subtitle text-crimson text-md">Every dream starts with one name...</p>
 
-        <Form className="signup-form text-crimson">
-
-          {/* USERNAME */}
+        <Form className="signup-form text-crimson" onSubmit={handleSubmit}>
           <div className="form-row mb-3">
             <label>Username</label>
             <div className="input-icon-group">
@@ -48,21 +76,17 @@ const SignUp = () => {
                 type="text"
                 placeholder="Your username"
                 value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                  if (!usernameTouched) setUsernameTouched(true);
-                }}
+                onChange={(e) => setUsername(e.target.value)}
+                onBlur={() => setTouched({ ...touched, username: true })}
               />
-              {usernameTouched && (
-                username
-                  ? <FaCheckCircle className="icon success" />
-                  : <FaTimesCircle className="icon error" />
-              )}
+              {touched.username &&
+                (username ? <FaCheckCircle className="icon success" /> : <FaTimesCircle className="icon error" />)}
             </div>
-            {usernameTouched && !username && <p className="text-detail-error mb-0 text-danger">*Username required</p>}
+            {touched.username && !username && (
+              <p className="text-detail-error mb-0 text-danger">*Username required</p>
+            )}
           </div>
 
-          {/* EMAIL */}
           <div className="form-row mb-3">
             <label>Email Address</label>
             <div className="input-icon-group">
@@ -70,22 +94,24 @@ const SignUp = () => {
                 type="email"
                 placeholder="you@example.com"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (!emailTouched) setEmailTouched(true);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched({ ...touched, email: true })}
               />
-              {emailTouched && (
-                isValidEmail(email)
-                  ? <FaCheckCircle className="icon success" />
-                  : <FaTimesCircle className="icon error" />
-              )}
+              {touched.email &&
+                (isValidEmail(email) ? (
+                  <FaCheckCircle className="icon success" />
+                ) : (
+                  <FaTimesCircle className="icon error" />
+                ))}
             </div>
-            {emailTouched && !email && <p className="text-detail-error mb-0 text-danger">*Email is required</p>}
-            {emailTouched && email && !isValidEmail(email) && <p className="text-detail-error mb-0 text-danger">*Enter a valid email address</p>}
+            {touched.email && email && !isValidEmail(email) && (
+              <p className="text-detail-error mb-0 text-danger">*Enter a valid email address</p>
+            )}
+            {touched.email && !email && (
+              <p className="text-detail-error mb-0 text-danger">*Email is required</p>
+            )}
           </div>
 
-          {/* PASSWORD */}
           <div className="form-row mb-3">
             <label>Password</label>
             <div className="input-icon-group">
@@ -93,24 +119,26 @@ const SignUp = () => {
                 type="password"
                 placeholder="Enter password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (!passwordTouched) setPasswordTouched(true);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => setTouched({ ...touched, password: true })}
               />
-              {passwordTouched && (
-                isStrongPassword(password)
-                  ? <FaCheckCircle className="icon success" />
-                  : <FaTimesCircle className="icon error" />
-              )}
+              {touched.password &&
+                (isStrongPassword(password) ? (
+                  <FaCheckCircle className="icon success" />
+                ) : (
+                  <FaTimesCircle className="icon error" />
+                ))}
             </div>
-            {passwordTouched && !password && <p className="text-detail-error mb-0 text-danger">*Password is required</p>}
-            {passwordTouched && password && !isStrongPassword(password) && (
-              <p className="text-detail-error mb-0 text-danger">*Password must contain at least 6 characters, including one number</p>
+            {touched.password && !password && (
+              <p className="text-detail-error mb-0 text-danger">*Password is required</p>
+            )}
+            {touched.password && password && !isStrongPassword(password) && (
+              <p className="text-detail-error mb-0 text-danger">
+                *Password must contain at least 6 characters, including one number
+              </p>
             )}
           </div>
 
-          {/* CONFIRM PASSWORD */}
           <div className="form-row mb-4">
             <label>Confirm Password</label>
             <div className="input-icon-group">
@@ -118,22 +146,24 @@ const SignUp = () => {
                 type="password"
                 placeholder="Repeat password"
                 value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                  if (!confirmPasswordTouched) setConfirmPasswordTouched(true);
-                }}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onBlur={() => setTouched({ ...touched, confirmPassword: true })}
               />
-              {confirmPasswordTouched && (
-                doPasswordsMatch
-                  ? <FaCheckCircle className="icon success" />
-                  : <FaTimesCircle className="icon error" />
-              )}
+              {touched.confirmPassword &&
+                (doPasswordsMatch ? (
+                  <FaCheckCircle className="icon success" />
+                ) : (
+                  <FaTimesCircle className="icon error" />
+                ))}
             </div>
-            {confirmPasswordTouched && !confirmPassword && <p className="text-detail-error mb-0 text-danger">*Please confirm your password</p>}
-            {confirmPasswordTouched && confirmPassword && !doPasswordsMatch && <p className="text-detail-error mb-0 text-danger">*Passwords do not match</p>}
+            {touched.confirmPassword && !confirmPassword && (
+              <p className="text-detail-error mb-0 text-danger">*Please confirm your password</p>
+            )}
+            {touched.confirmPassword && confirmPassword && !doPasswordsMatch && (
+              <p className="text-detail-error mb-0 text-danger">*Passwords do not match</p>
+            )}
           </div>
 
-          {/* CHECKBOXES */}
           <p className="terms-label">To join, you have to accept our Terms and Conditions:</p>
 
           <div className="checkbox-group">
@@ -142,38 +172,28 @@ const SignUp = () => {
               id="check-1"
               label="I have read and accept the Terms of the Pact."
               className="checkbox-custom"
-              onChange={(e) => {
-                setChecks({ ...checks, one: e.target.checked });
-                setChecksTouched(true);
-              }}
+              onChange={(e) => setChecks({ ...checks, one: e.target.checked })}
+              onBlur={() => setTouched({ ...touched, checks: true })}
             />
             <FormCheck
               type="checkbox"
               id="check-2"
               label="I consent to the handling of my data by the Watchers Beyond."
               className="checkbox-custom"
-              onChange={(e) => {
-                setChecks({ ...checks, two: e.target.checked });
-                setChecksTouched(true);
-              }}
+              onChange={(e) => setChecks({ ...checks, two: e.target.checked })}
             />
             <FormCheck
               type="checkbox"
               id="check-3"
               label="I understand that once inside, there is no turning back."
               className="checkbox-custom"
-              onChange={(e) => {
-                setChecks({ ...checks, three: e.target.checked });
-                setChecksTouched(true);
-              }}
+              onChange={(e) => setChecks({ ...checks, three: e.target.checked })}
             />
           </div>
 
-          {checksTouched && !Object.values(checks).every(Boolean) && (
+          {touched.checks && !allChecks && (
             <p className="text-detail-error text-danger">*You must accept all terms and conditions</p>
           )}
-
-          <p className="vows-text">El Umbral acknowledges your vows.</p>
 
           <div className="d-flex justify-content-center">
             <button
@@ -197,6 +217,5 @@ const SignUp = () => {
     </div>
   );
 };
-
 
 export default SignUp;
