@@ -65,6 +65,13 @@ const Navbar = () => {
             <NavLink className="nav-link" to="/" end>Home</NavLink>
             <NavLink className="nav-link" to="/artifacts">Artifacts</NavLink>
             <NavLink className="nav-link" to="/collections">Collections</NavLink>
+            
+            {token && (
+              <>
+                <NavLink className="nav-link" to="/profile">My Profile</NavLink>
+              </>
+            )}
+
             <NavLink className="nav-link" to="/cart">
               <FaShoppingCart size={18} />
             </NavLink>
