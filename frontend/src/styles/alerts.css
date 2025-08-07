@@ -1,0 +1,60 @@
+@import url('./styles.css');
+
+.umbral-popup {
+  background-color: #121212 !important;
+  border: 1px solid #4a148c;
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+  border-radius: 12px;
+  font-family: 'Spectral SC', serif;
+  color: #e0d5ff;
+}
+
+.umbral-title {
+  color: #e0d5ff;
+  font-size: 1.75rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px #7e57c2;
+}
+
+.umbral-text {
+  color:#e0d5ff;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Opcional: ícono en morado */
+.umbral-icon > svg {
+  filter: drop-shadow(0 0 4px #8e44ad);
+}
+
+.umbral-confirm {
+  background-color: #6a1b9a !important;
+  color: #fff !important;
+  border: 1px solid #9c27b0;
+  box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+  border-radius: 8px !important;
+  font-family: 'Spectral SC', serif;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.umbral-confirm:hover {
+  background-color: #8e24aa !important;
+  box-shadow: 0 0 12px rgba(186, 104, 200, 0.6);
+}
+
+.umbral-cancel {
+  background-color: #2e2e2e !important;
+  color: #e0d5ff !important;
+  border: 1px solid #555;
+  border-radius: 8px !important;
+  font-family: 'Spectral SC', serif;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.umbral-cancel:hover {
+  background-color: #444 !important;
+  border-color: #777;
+}
