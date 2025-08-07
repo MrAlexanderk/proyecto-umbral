@@ -1,0 +1,183 @@
+@import url('./styles.css');
+
+.signup-container {
+  display: flex;
+  min-height: 100vh;
+  background-image: url('../assets/user_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.signup-box {
+    background: var(--color-transparent);
+    padding: 3rem;
+    border-radius: 0.3rem;
+    max-width: 750px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.link-none {
+    color: var(--color-white);
+}
+
+.signup-box h1 {
+    color: var(--color-white);
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.signup-box p {
+    margin-bottom: 2rem;
+    color: var(--color-gray);
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-control {
+    padding-right: 2.5rem;
+}
+
+.form-group .input-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.checkbox-group label {
+  font-size: 0.95rem;
+  color: var(--color-gray);
+}
+
+.commitment-note {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-gray);
+  text-align: center;
+}
+
+.commitment-note a {
+
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* Asegura la alineación de los labels */
+.signup-form .form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.signup-form .form-row label {
+  font-weight: 00;
+  margin-bottom: 0.3rem;
+  color: var(--color-gray);
+}
+
+/* Ajusta el input con el ícono a la derecha */
+.input-icon-group {
+  position: relative;
+}
+
+.input-icon-group input {
+  width: 93%;
+  font-size: var(--font-size-s);
+  border-radius: 10px;
+  border: 1px solid var(--color-gray);
+  background-color: transparent;
+  color: var(--color-white);
+  padding: 0.25rem 1rem;
+}
+
+/* Posición del ícono */
+.input-icon-group .icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+}
+
+.icon.success {
+  color: #28a745;
+}
+
+.icon.error {
+  color: #dc3545;
+}
+
+/* Estilo cuando el botón está desactivado */
+button.btn-primary.disabled,
+button.btn-primary:disabled {
+  background-color: grey;
+  border-color: grey;
+  cursor: not-allowed;
+}
+
+
+
+
+/* Oculta el checkbox nativo */
+.checkbox-custom input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  border: 2px solid var(--color-button-primary);
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s, border-color 0.3s;
+  margin-right: 10px;
+}
+
+/* Checkbox seleccionado */
+.checkbox-custom input[type="checkbox"]:checked {
+  background-color: #28a745; /* Verde */
+  border-color: #28a745;
+}
+
+/* Agrega el check (tick) */
+.checkbox-custom input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Asegura que el label y el checkbox estén alineados */
+.checkbox-custom {
+  display: flex;
+  align-items: center;
+}
+
+.text-detail-error {
+    font-size: var(--font-size-s);
+    display: block;
+    padding-left: 15px;
+}
