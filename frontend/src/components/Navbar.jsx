@@ -18,8 +18,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     MySwal.fire({
-      title: 'Logged out',
-      text: `Farewell, ${email || "dreamer"}...`,
+      title: 'You are Leaving El Umbral',
+      text: `Are you sure?`,
       icon: 'info',
       showConfirmButton: true,
       showCancelButton: true,
@@ -66,11 +66,7 @@ const Navbar = () => {
             <NavLink className="nav-link" to="/artifacts">Artifacts</NavLink>
             <NavLink className="nav-link" to="/collections">Collections</NavLink>
             
-            {token && (
-              <>
-                <NavLink className="nav-link" to="/profile">My Profile</NavLink>
-              </>
-            )}
+            {token && (<><NavLink className="nav-link" to="/profile">My Profile</NavLink></>)}
 
             <NavLink className="nav-link" to="/cart">
               <FaShoppingCart size={18} />
