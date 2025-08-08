@@ -15,28 +15,30 @@ import Footer from './components/Footer';
 import { UserContext } from './context/UserContext';
 
 function App() {
-  const { token } = useContext(UserContext);
-
-
+  const { token, loading } = useContext(UserContext);
 
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-            <Route 
-              path="/profile" 
-              element={token ? <Profile /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/register" 
-              element={!token ? <SignUp /> : <Navigate to="/" />} 
-            />
-            <Route 
-              path="/login" 
-              element={!token ? <LogIn /> : <Navigate to="/" />} 
-            />
-        {/* Agrega más rutas luego */}
+        <Route
+          path="/login"
+          element={!loading ? <LogIn /> : null}
+        />
+        <Route
+          path="/signup"
+          element={!loading ? <SignUp /> : null}
+        />
+        {/* Rutas protegidas */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Footer />
     </BrowserRouter>

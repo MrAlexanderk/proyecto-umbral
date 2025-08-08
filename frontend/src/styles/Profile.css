@@ -1,0 +1,7 @@
+@import url('./styles.css');
+
+.editing-mode{
+    border: 0.1rem solid var(--color-gray);
+    border-radius: 1rem;
+    padding: 1rem;
+}
