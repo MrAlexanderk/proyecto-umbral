@@ -10,7 +10,7 @@ import '../styles/Buttons.css';
 
 const MySwal = withReactContent(Swal);
 
-const SignUp = () => {
+const Profile = () => {
   const navigate = useNavigate();
   const { register } = useContext(UserContext);
 
@@ -229,4 +229,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Profile;
