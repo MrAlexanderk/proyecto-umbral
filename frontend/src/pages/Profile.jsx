@@ -236,10 +236,8 @@ const Profile = () => {
                 </div>
                 </Form>
 
-                <div class="artifacts-container mt-5">
-                    <h2 className="text-white-custom text-md text-spectral">My Artifacts</h2>
-                    <p className="text-crimson text-md">Here you can manage your artifacts.</p>
-
+                <div className="artifacts-container mt-5">
+                    <h2 className="text-white-custom text-md text-spectral mb-3">My Artifacts</h2>
                     <ArtifactList />
                 </div>
 

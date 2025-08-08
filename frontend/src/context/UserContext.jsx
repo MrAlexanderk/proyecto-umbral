@@ -135,7 +135,7 @@ export const UserProvider = ({ children }) => {
           age: "Siglo XV",
           origin: "Japón",
           created_at: "2025-01-15T14:30:00Z",
-          image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          image: "https://images.unsplash.com/photo-1438012940875-4bf705025a8a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         }
       ];
 
