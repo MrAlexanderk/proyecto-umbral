@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import ArtifactRow from './ArtifactRow';
-import '../styles/ArtifactList.css';
 
 const ArtifactList = () => {
   const { getArtifactsFromUser, token } = useContext(UserContext);
@@ -24,7 +23,7 @@ const ArtifactList = () => {
   if (!artifacts.length) return <p>No artifacts found.</p>;
 
   return (
-    <div className="artifact-list">
+    <div>
       {artifacts.length === 0 ? (
         <p>No artifacts found.</p>
       ) : (

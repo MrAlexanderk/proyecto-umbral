@@ -118,7 +118,7 @@ export const UserProvider = ({ children }) => {
           description: "Un amuleto antiguo que absorbe la luz.",
           history: "Se dice que perteneció a un guardián de secretos oscuros.",
           price: 2500,
-          age: "Siglo XVIII",
+          age: "476",
           origin: "España",
           created_at: "2024-12-01T10:00:00Z",
           image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -132,7 +132,7 @@ export const UserProvider = ({ children }) => {
           description: "Una espada que siempre está caliente al tacto.",
           history: "Fue forjada en un volcán activo por un herrero legendario.",
           price: 4800,
-          age: "Siglo XV",
+          age: "23",
           origin: "Japón",
           created_at: "2025-01-15T14:30:00Z",
           image: "https://images.unsplash.com/photo-1438012940875-4bf705025a8a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"

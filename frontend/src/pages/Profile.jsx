@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { Form } from "react-bootstrap";
 import { FaEdit, FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -237,7 +237,18 @@ const Profile = () => {
                 </Form>
 
                 <div className="artifacts-container mt-5">
-                    <h2 className="text-white-custom text-md text-spectral mb-3">My Artifacts</h2>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h2 className="text-white-custom text-md text-spectral mb-3">My Artifacts</h2>
+                        <button
+                            type="button"
+                            className="text-white text-s text-crimson custom-button-add"
+                            onClick={() => navigate('/add-artifact')}
+                        >
+                            +
+                        </button>
+                    </div>
+
+
                     <ArtifactList />
                 </div>
 
