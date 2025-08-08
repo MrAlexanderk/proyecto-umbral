@@ -47,10 +47,8 @@ const SignUp = () => {
     if (!allValid) return;
 
     try {
-      // Llamas al register del context con los datos que quieras pasar (email y password mínimo)
       await register({ email, password });
 
-      // Luego muestras el Swal de éxito
       await MySwal.fire({
         title: "Registration successful!",
         text: `The Threshold acknowledges your vows, ${username}.`,
@@ -66,10 +64,9 @@ const SignUp = () => {
         timerProgressBar: true,
       });
 
-      // Después navegas al home o login
       navigate('/');
+
     } catch (error) {
-      // En caso de error muestras mensaje con Swal
       MySwal.fire({
         title: "Registration failed",
         text: error.message || "An error occurred during registration.",

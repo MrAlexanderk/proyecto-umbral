@@ -3,22 +3,29 @@ import axios from "axios";
 
 export const UserContext = createContext();
 
-const UserProvider = ({ children }) => {
+export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
 
   const login = async (credentials) => {
     try {
+      // Fake login for demonstration purposes
+      const fakeToken = "fake-jwt-token-1234567890";
+      setToken(fakeToken);
+
+      /*
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
         credentials
       );
       const { token, email } = response.data;
       setToken(token);
+      */
       setEmail(email);
 
       localStorage.setItem("token", token);
       localStorage.setItem("email", email);
+
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -27,7 +34,7 @@ const UserProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      // Simulación de registro exitoso sin conexión a backend:
+      // Fake sign up for demonstration purposes
       const fakeToken = "fake-jwt-token-1234567890";
       setToken(fakeToken);
       setEmail(userData.email);
