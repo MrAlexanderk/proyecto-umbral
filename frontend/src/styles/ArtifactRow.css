@@ -74,9 +74,16 @@ p{
   width: 20%;
 }
 
-.price {
+.right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    rotate: 12deg;
+}
+
+.price_custom {
     font-size: var(--font-size-md);
-    color: #28a745;
+    color: #009e1a !important;
     font-weight: bold;
 }
 
@@ -92,7 +99,7 @@ p{
 
 .type {
   font-size: 18px;
-  color: #ccc;
+  color: var(--color-gray);
 }
 
 .custom-button-add{

@@ -9,7 +9,7 @@ const ArtifactRow = ({ artifact }) => {
     <div className="artifact-card">
       <img src={artifact.image} alt={artifact.name} className="artifact-image" />
 
-      <div className="content p-0">
+      <div className="content">
         <div className="header text-spectral">
             <h2 className="text-md">{artifact.name}</h2>
             <p className="status">ACTIVE</p>
@@ -34,8 +34,7 @@ const ArtifactRow = ({ artifact }) => {
             </div>
 
             <div className="right">
-                <p><strong>Price:</strong> </p>
-                <p className="px-2 price">${artifact.price}</p>
+                <p className="px-2 price_custom">${artifact.price}</p>
             </div>
         </div>
       </div>

@@ -44,12 +44,12 @@ const Profile = () => {
 
     const handleDeleteAccount = () => {
         MySwal.fire({
-        title: "You can't leave El Umbral",
+        title: "We own you, remember?",
         text: `Go back now!`,
         icon: 'info',
         showCancelButton: true,
         showConfirmButton: false,
-        cancelButtonText: 'Yes, Sir!',
+        cancelButtonText: 'Yes, Master!',
         customClass: {
             popup: 'umbral-popup',
             title: 'umbral-title',
@@ -58,11 +58,10 @@ const Profile = () => {
         },
         });
     };
-
     
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState(''); // Usamos para el placeholder con ****
+    const [password, setPassword] = useState('');
     const [editMode, setEditMode] = useState(false);
     const [loadingProfile, setLoadingProfile] = useState(true);
 
