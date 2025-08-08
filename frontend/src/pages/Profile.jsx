@@ -10,6 +10,7 @@ import "../styles/SignUp.css";
 import "../styles/Buttons.css";
 import "../styles/alerts.css";
 import "../styles/Profile.css";
+import ArtifactList from "../components/ArtifactList";
 
 const MySwal = withReactContent(Swal);
 
@@ -235,14 +236,14 @@ const Profile = () => {
                 </div>
                 </Form>
 
-                <div class="artifacts-container">
+                <div class="artifacts-container mt-5">
                     <h2 className="text-white-custom text-md text-spectral">My Artifacts</h2>
                     <p className="text-crimson text-md">Here you can manage your artifacts.</p>
-                    {/* Aquí podrías agregar un componente o lógica para mostrar los artefactos del usuario */}
 
+                    <ArtifactList />
                 </div>
 
-                <div className="d-flex justify-content-center mt-3">
+                <div className="d-flex justify-content-center mt-5">
 
                     <button
                         className="btn-secondary text-md text-danger w-100 text-crimson"

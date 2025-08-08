@@ -82,8 +82,6 @@ export const UserProvider = ({ children }) => {
   };
 
   const getProfile = async () => {
-
-
     try {
       // Datos falsos estáticos para desarrollo sin backend
       return {
@@ -107,9 +105,61 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const getArtifactsFromUser = async () => {
+    try {
+      // Datos de prueba estáticos para desarrollo
+      const testData = [
+        {
+          id: 1,
+          user_id: 101,
+          status_id: 1,
+          type_id: 3,
+          name: "Amuleto de Sombras",
+          description: "Un amuleto antiguo que absorbe la luz.",
+          history: "Se dice que perteneció a un guardián de secretos oscuros.",
+          price: 2500,
+          age: "Siglo XVIII",
+          origin: "España",
+          created_at: "2024-12-01T10:00:00Z",
+          image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        },
+        {
+          id: 2,
+          user_id: 101,
+          status_id: 2,
+          type_id: 2,
+          name: "Espada de Fuego",
+          description: "Una espada que siempre está caliente al tacto.",
+          history: "Fue forjada en un volcán activo por un herrero legendario.",
+          price: 4800,
+          age: "Siglo XV",
+          origin: "Japón",
+          created_at: "2025-01-15T14:30:00Z",
+          image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        }
+      ];
+
+      return testData;
+
+      /*
+      // Código real comentado para el backend
+      const response = await axios.get("/artifacts/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+      */
+    } catch (error) {
+      console.error("Failed to fetch artifacts:", error);
+      return [];
+    }
+  };
+
+
   return (
     <UserContext.Provider
-      value={{ token, email, login, register, logout, getProfile, loading }}
+      value={{ token, email, login, register, logout, getProfile, loading, getArtifactsFromUser  }}
     >
       {children}
     </UserContext.Provider>
