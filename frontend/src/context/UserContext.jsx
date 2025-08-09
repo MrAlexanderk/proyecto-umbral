@@ -1,6 +1,26 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
+import {
+  GiSkeleton,
+  GiMirrorMirror,
+  GiAncientSword,
+  GiDiamondRing,
+  GiClothes,
+} from "react-icons/gi";
+import { FaBookDead, FaMicrochip, FaQuestionCircle } from "react-icons/fa";
+
+const categories = [
+  { label: "Dolls", icon: GiSkeleton, to: "/category/dolls" },
+  { label: "Mirrors", icon: GiMirrorMirror, to: "/category/mirrors" },
+  { label: "Books", icon: FaBookDead, to: "/category/books" },
+  { label: "Tech", icon: FaMicrochip, to: "/category/tech" },
+  { label: "Relics", icon: GiAncientSword, to: "/category/relics" },
+  { label: "Lockets", icon: GiDiamondRing, to: "/category/lockets" },
+  { label: "Garments", icon: GiClothes, to: "/category/garments" },
+  { label: "Others", icon: FaQuestionCircle, to: "/category/others" },
+];
+
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -240,9 +260,39 @@ export const UserProvider = ({ children }) => {
 
 
 
+  const getTypeNameById = useCallback(
+    async (id) => {
+      // Código real backend:
+      /*
+      try {
+        const response = await axios.get('/api/types');
+        const types = response.data;
+        const found = types.find((type) => type.id === id);
+        return found ? found.name : null;
+      } catch (error) {
+        console.error("Failed to fetch types:", error);
+        return null;
+      }
+      */
+
+      // Código falso/hardcodeado:
+      // Nota: asumiendo que id corresponde a índice+1 en categories
+      const index = id - 1;
+      if (index >= 0 && index < categories.length) {
+        return categories[index].label;
+      }
+      return null;
+    },
+    []
+  );
+
+
   return (
     <UserContext.Provider
-      value={{ token, email, user, login, register, logout, getProfile, loading, updateProfile, getArtifactsFromUser, addArtifact }}
+      value={{ token, email, user, login, register, 
+        logout, getProfile, loading, updateProfile, 
+        getArtifactsFromUser, addArtifact, getTypeNameById
+       }}
     >
       {children}
     </UserContext.Provider>

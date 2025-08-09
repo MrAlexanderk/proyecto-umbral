@@ -111,18 +111,18 @@ const Profile = () => {
             setPassword(''.padStart(updatedUser.passwordLength || 8, '*'));
 
             await MySwal.fire({
-            title: "Profile updated",
-            text: `Your data has been saved, ${username}.`,
-            icon: "success",
-            timer: 1200,
-            showConfirmButton: false,
-            timerProgressBar: true,
-            customClass: {
-                popup: "umbral-popup",
-                title: "umbral-title",
-                content: "umbral-text",
-                icon: "umbral-icon",
-            },
+                title: "Profile updated",
+                text: `Your data has been saved, ${username}.`,
+                icon: "success",
+                timer: 1200,
+                showConfirmButton: false,
+                timerProgressBar: true,
+                customClass: {
+                    popup: "umbral-popup",
+                    title: "umbral-title",
+                    content: "umbral-text",
+                    icon: "umbral-icon",
+                },
             });
 
             setEditMode(false);

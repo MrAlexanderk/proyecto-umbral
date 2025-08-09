@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -32,8 +32,11 @@ const AddArtifact = () => {
   const [artifactAge, setArtifactAge] = useState('');
   const [artifactPrice, setArtifactPrice] = useState('');
   const [artifactHistory, setArtifactHistory] = useState('');
+  const [artifactDescription, setArtifactDescription] = useState('');
   const [artifactImage, setArtifactImage] = useState(null);
   const [artifactImageName, setArtifactImageName] = useState('');
+
+  const [profile, setProfile] = useState(null);
 
 
   const [touched, setTouched] = useState({
@@ -43,6 +46,8 @@ const AddArtifact = () => {
     artifactAge: false,
     artifactPrice: false,
     artifactHistory: false,
+    artifactDescription: false,
+    artifactImage: false,
     password: false,
     confirmPassword: false,
     checks: false,
@@ -54,16 +59,28 @@ const AddArtifact = () => {
     artifactOrigin &&
     artifactAge &&
     artifactPrice &&
-    artifactHistory;
+    artifactHistory &&
+    artifactDescription &&
+    artifactImage;
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const userData = await getProfile();
+      setProfile(userData);
+    }
+    fetchProfile();
+  }, [getProfile]);
   
   const artifact = {
     name: artifactName || "Artifact Name",
-    type: artifactType || "Artifact Type",
+    type_id: artifactType || "Artifact Type",
     origin: artifactOrigin || "Origin",
     age: artifactAge || "Artifact Age",
     price: artifactPrice || "$$$$$",
+    description: artifactDescription || "Include a short Description",
     history: artifactHistory || "Include a brief and REALISTIC history of the artifact.",
-    image: artifactImage || "../../src/assets/hero.jpg"
+    image: artifactImage || "../../src/assets/hero.jpg",
+    seller: profile.username || "Unknown Seller"
   };
 
   const handleSubmit = async (e) => {
@@ -120,6 +137,7 @@ const AddArtifact = () => {
     if (file) {
       setArtifactImage(URL.createObjectURL(file));
       setArtifactImageName(file.name);
+      setTouched((prev) => ({ ...prev, artifactImage: true }));  // <- actualizar touched aquí
     }
   };
 
@@ -225,6 +243,24 @@ const AddArtifact = () => {
           </div>
 
           <div className="form-row mb-3">
+            <label className="text-md">Artifact Description</label>
+            <div className="input-icon-group">
+              <textarea
+                className="artifact-history-input"
+                placeholder="Your unholy artifact Description"
+                value={artifactDescription}
+                onChange={(e) => setArtifactDescription(e.target.value)}
+                onBlur={() => setTouched({ ...touched, artifactDescription: true })}
+              />
+              {touched.artifactDescription &&
+                (artifactDescription ? ( <FaCheckCircle className="icon success" /> ) : ( <FaTimesCircle className="icon error" /> ))}
+            </div>
+            {touched.artifactDescription && !artifactDescription && (
+              <p className="text-detail-error mb-0 text-danger">*Artifact Description required</p>
+            )}
+          </div>
+
+          <div className="form-row mb-3">
             <label className="text-md">Artifact History</label>
             <div className="input-icon-group">
               <textarea
@@ -241,40 +277,50 @@ const AddArtifact = () => {
               <p className="text-detail-error mb-0 text-danger">*Artifact History required</p>
             )}
           </div>
-          <label className="text-md text-gray-custom">Artifact History</label>
-          <div className="d-flex justify-content-left add-image-container">
+
+
+          <label className="text-md text-gray-custom">Artifact Image</label>
+          <div className="d-flex justify-content-left add-image-container" style={{ alignItems: 'center', gap: '10px' }}>
             <input
               type="file"
               accept="image/*"
               id="artifactImageInput"
               style={{ display: 'none' }}
               onChange={handleImageChange}
+              onBlur={() => setTouched((prev) => ({ ...prev, artifactImage: true }))}
             />
 
             <button
               type="button"
               className="btn-secondary mt-3 text-s text-white-custom add-image-btn"
-              onClick={() => document.getElementById('artifactImageInput').click()}
+              onClick={() => {
+                document.getElementById('artifactImageInput').click();
+                setTouched((prev) => ({ ...prev, artifactImage: true }));
+              }}
             >
               Select Image
             </button>
 
-            {artifactImage ? (
-              <>
-                <p className="text-md">Image loaded ✅</p>
-                <p className="text-s"><em>{artifactImageName}</em></p>
-              </>
-            ) : (
-              <p>Image not loaded.</p>
-            )}
+            <div className="d-flex flex-row align-items-center m-0 p-0">
+              <p className="text-md m-0 p-0">
+                {artifactImage ? "Image loaded ✅" : "Image not loaded."}
+              </p>
+            </div>
+
+
           </div>
+          {!artifactImage ? (
+            <p className="text-detail-error mb-0 text-danger">*Artifact Image is required</p>
+          ) : (
+            <p className="text-s"><em>Image loaded: {artifactImageName}</em></p>
+          )}
 
           <hr className="divider" />
 
           <h2 className="text-white-custom text-spectral mt-3">Preview</h2>
           <p className="terms-label text-crimson mb-4">This is how your artifact will be displayed:</p>
 
-          <ArtifactVisual key={artifact.id} artifact={artifact}></ArtifactVisual>
+          <ArtifactVisual artifact={artifact} />
 
           <hr className="divider" />
 
