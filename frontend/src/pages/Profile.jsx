@@ -15,7 +15,7 @@ import ArtifactList from "../components/ArtifactList";
 const MySwal = withReactContent(Swal);
 
 const Profile = () => {
-    const { token, email: contextEmail, getProfile, logout } = useContext(UserContext);
+    const { token, email: contextEmail, getProfile, logout, updateProfile } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -90,36 +90,49 @@ const Profile = () => {
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isStrongPassword = (pass) => pass === password || /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(pass);
     const allValid = username && isValidEmail(email) && isStrongPassword(password);
+
     const handleSave = async (e) => {
         e.preventDefault();
         if (!allValid) {
-        MySwal.fire({
-            title: "Invalid input",
-            text: "Please check your data before saving.",
-            icon: "warning",
-        });
-        return;
+            MySwal.fire({
+                title: "Invalid input",
+                text: "Please check your data before saving.",
+                icon: "warning",
+            });
+            return;
         }
 
-        // Aquí hay que agregar el código para guardar los cambios en el perfil.
-        // Por ahora alerta de éxito y salimos de modo edición
 
-        await MySwal.fire({
-        title: "Profile updated",
-        text: `Your data has been saved, ${username}.`,
-        icon: "success",
-        timer: 1200,
-        showConfirmButton: false,
-        timerProgressBar: true,
-        customClass: {
-          popup: 'umbral-popup',
-          title: 'umbral-title',
-          content: 'umbral-text',
-          icon: 'umbral-icon'
-        },
-        });
+        try {
+            const updatedUser = await updateProfile({ username, email, password });
 
-        setEditMode(false);
+            setUsername(updatedUser.username || '');
+            setEmail(updatedUser.email || contextEmail || '');
+            setPassword(''.padStart(updatedUser.passwordLength || 8, '*'));
+
+            await MySwal.fire({
+            title: "Profile updated",
+            text: `Your data has been saved, ${username}.`,
+            icon: "success",
+            timer: 1200,
+            showConfirmButton: false,
+            timerProgressBar: true,
+            customClass: {
+                popup: "umbral-popup",
+                title: "umbral-title",
+                content: "umbral-text",
+                icon: "umbral-icon",
+            },
+            });
+
+            setEditMode(false);
+        } catch (error) {
+            await MySwal.fire({
+            title: "Update failed",
+            text: error.message || "An error occurred while updating your profile.",
+            icon: "error",
+            });
+        }
     };
 
     if (loadingProfile) {

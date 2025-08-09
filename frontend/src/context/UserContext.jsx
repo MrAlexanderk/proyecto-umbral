@@ -84,16 +84,19 @@ export const UserProvider = ({ children }) => {
 
   const getProfile = useCallback(async () => {
     try {
-    // Datos falsos por el momento
-    const fakeUser = {
-      username: "shadowhunter",
-      email: "shadowhunter@umbral.com",
-      passwordLength: 8,
-      id: 1
-    };
+      if(user) return user;
+      else{
+        // Datos falsos por el momento
+        const fakeUser = {
+          username: "shadowhunter",
+          email: "shadowhunter@umbral.com",
+          passwordLength: 8,
+          id: 1
+        };
 
-    setUser(fakeUser);
-    return fakeUser;
+        setUser(fakeUser);
+        return fakeUser;
+      }
 
     /*
     // Código real para cuando exista backend
@@ -105,11 +108,12 @@ export const UserProvider = ({ children }) => {
     setUser(response.data);
     return response.data;
     */
+
     } catch (error) {
       console.error("Failed to fetch profile:", error);
       return null;
     }
-  }, [token]);
+  }, [user, token]);
 
   const getArtifactsFromUser = async () => {
     try {
@@ -192,11 +196,53 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (updatedData) => {
+    try {
+      /*
+      // Código real para backend (descomenta y ajusta URL)
+      const response = await axios.put(
+        "/api/auth/me",
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+      */
+
+      // Fake update (simulación por ahora)
+      console.log("Updating profile with data:", updatedData);
+
+      if (updatedData.email) {
+        setEmail(updatedData.email);
+        localStorage.setItem("email", updatedData.email);
+      }
+
+      setUser((prevUser) => ({
+        ...prevUser,
+        ...updatedData,
+        passwordLength: updatedData.password ? updatedData.password.length : prevUser?.passwordLength || 8,
+      }));
+
+      // Retornar el perfil actualizado (fake)
+      return {
+        ...user,
+        ...updatedData,
+        passwordLength: updatedData.password ? updatedData.password.length : user?.passwordLength || 8,
+      };
+    } catch (error) {
+      console.error("Update profile failed:", error);
+      throw error;
+    }
+  };
+
 
 
   return (
     <UserContext.Provider
-      value={{ token, email, user, login, register, logout, getProfile, loading, getArtifactsFromUser, addArtifact }}
+      value={{ token, email, user, login, register, logout, getProfile, loading, updateProfile, getArtifactsFromUser, addArtifact }}
     >
       {children}
     </UserContext.Provider>
