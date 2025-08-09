@@ -23,6 +23,7 @@ const categories = [
 ];
 
 const AddArtifact = () => {
+  const {addArtifact, getProfile } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [artifactName, setartifactName] = useState('');
@@ -42,7 +43,6 @@ const AddArtifact = () => {
     artifactAge: false,
     artifactPrice: false,
     artifactHistory: false,
-    email: false,
     password: false,
     confirmPassword: false,
     checks: false,
@@ -71,7 +71,25 @@ const AddArtifact = () => {
 
     if (!allValid) return;
 
+    const user = await getProfile();
+    if (!user) throw new Error("User not found");
+
+    const payload = {
+      user_id: user?.id,
+      status_id: 1,
+      type_id: Number(artifactType),
+      name: artifactName,
+      description: artifactHistory,
+      history: artifactHistory,
+      price: Number(artifactPrice),
+      age: artifactAge,
+      origin: artifactOrigin,
+      image_url: artifactImage
+    };
+
     try {
+
+      await addArtifact(payload);
 
       await MySwal.fire({
         title: "Artifact added successful!",
@@ -223,7 +241,7 @@ const AddArtifact = () => {
               <p className="text-detail-error mb-0 text-danger">*Artifact History required</p>
             )}
           </div>
-
+          <label className="text-md text-gray-custom">Artifact History</label>
           <div className="d-flex justify-content-left add-image-container">
             <input
               type="file"
@@ -232,9 +250,10 @@ const AddArtifact = () => {
               style={{ display: 'none' }}
               onChange={handleImageChange}
             />
+
             <button
               type="button"
-              className="btn-secondary mt-3 text-s text-white add-image-btn"
+              className="btn-secondary mt-3 text-s text-white-custom add-image-btn"
               onClick={() => document.getElementById('artifactImageInput').click()}
             >
               Select Image
@@ -242,8 +261,8 @@ const AddArtifact = () => {
 
             {artifactImage ? (
               <>
-                <p>Image loaded ✅</p>
-                <p>{artifactImageName}</p>
+                <p className="text-md">Image loaded ✅</p>
+                <p className="text-s"><em>{artifactImageName}</em></p>
               </>
             ) : (
               <p>Image not loaded.</p>
@@ -252,10 +271,8 @@ const AddArtifact = () => {
 
           <hr className="divider" />
 
-          <h2 className="text-white text-spectral mt-3">Preview</h2>
+          <h2 className="text-white-custom text-spectral mt-3">Preview</h2>
           <p className="terms-label text-crimson mb-4">This is how your artifact will be displayed:</p>
-
-
 
           <ArtifactVisual key={artifact.id} artifact={artifact}></ArtifactVisual>
 

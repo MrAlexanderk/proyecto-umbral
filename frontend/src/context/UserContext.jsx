@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 export const UserContext = createContext();
@@ -7,6 +7,7 @@ export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   // Este useEffect se ejecuta solo al montar el Provider y lee localStorage
   useEffect(() => {
@@ -81,29 +82,34 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("email");
   };
 
-  const getProfile = async () => {
+  const getProfile = useCallback(async () => {
     try {
-      // Datos falsos estáticos para desarrollo sin backend
-      return {
-        username: "shadowhunter",
-        email: "shadowhunter@umbral.com",
-        passwordLength: 8, // No mostrar contraseña real, solo longitud
-      };
+    // Datos falsos por el momento
+    const fakeUser = {
+      username: "shadowhunter",
+      email: "shadowhunter@umbral.com",
+      passwordLength: 8,
+      id: 1
+    };
 
-      /*
-      // Código real para cuando exista backend
-      const response = await axios.get("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-      */
+    setUser(fakeUser);
+    return fakeUser;
+
+    /*
+    // Código real para cuando exista backend
+    const response = await axios.get("/api/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUser(response.data);
+    return response.data;
+    */
     } catch (error) {
       console.error("Failed to fetch profile:", error);
       return null;
     }
-  };
+  }, [token]);
 
   const getArtifactsFromUser = async () => {
     try {
@@ -156,10 +162,41 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const addArtifact = async (artifactData) => {
+    try {
+      // --- Datos de prueba para desarrollo ---
+      console.log("Simulación: enviando artifact al backend:", artifactData);
+      return {
+        id: Math.floor(Math.random() * 10000), // id simulado
+        ...artifactData,
+        created_at: new Date().toISOString(),
+      };
+
+      /*
+      // --- Código real para backend ---
+      const response = await axios.post(
+        "http://localhost:5000/api/artifacts",
+        artifactData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+      */
+
+    } catch (error) {
+      console.error("Failed to add artifact:", error);
+      throw error;
+    }
+  };
+
+
 
   return (
     <UserContext.Provider
-      value={{ token, email, login, register, logout, getProfile, loading, getArtifactsFromUser  }}
+      value={{ token, email, user, login, register, logout, getProfile, loading, getArtifactsFromUser, addArtifact }}
     >
       {children}
     </UserContext.Provider>
