@@ -6,14 +6,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from './App.jsx'
 import { AppProvider } from './context/AppContext.jsx';
 import UserProvider from './context/UserContext.jsx';
+import { ArtifactsProvider } from './context/ArtifactsContext.jsx';
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <UserProvider>
-      <AppProvider>
-        <App />
-      </AppProvider>
-    </UserProvider>
+    <ArtifactsProvider>
+      <UserProvider>
+        <AppProvider>
+          <App />
+        </AppProvider>
+      </UserProvider>
+    </ArtifactsProvider>
   </StrictMode>,
 )

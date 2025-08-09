@@ -11,6 +11,7 @@ import SignUp from './pages/SignUp';
 import LogIn from './pages/LogIn';
 import Profile from './pages/Profile';
 import AddArtifact from './pages/AddArtifact';
+import ArtifactView from './pages/ArtifactView';
 import Footer from './components/Footer';
 
 import { UserContext } from './context/UserContext';
@@ -23,6 +24,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/artifacts" element={<ArtifactView />} />
         <Route
           path="/login"
           element={!loading ? <LogIn /> : null}

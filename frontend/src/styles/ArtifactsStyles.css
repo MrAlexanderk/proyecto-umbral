@@ -1,0 +1,31 @@
+@import url('./styles.css');
+
+.filters-panel {
+  background: linear-gradient(180deg, #1b0a12, #15070e);
+  border: 1px solid #3a0e1a;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.filters-title {
+  color: #c6b8bb; text-transform: uppercase; letter-spacing: .16em;
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.filter-subtitle { margin: 8px 0; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; }
+.filter-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.filter-check { display: flex; gap: 8px; align-items: center; color: #d6c8cb; }
+.filter-check input { width: 14px; height: 14px; accent-color: #7c0a1b; }
+.filter-check .icon { width: 18px; display: inline-grid; place-items: center; opacity: .9; }
+
+.results-header .chip {
+  border: 1px solid #3a0e1a;
+  background: #2b0b13; color: #fff;
+  border-radius: 6px; padding: 6px 10px;
+  text-transform: uppercase; font-size: 11px; letter-spacing: .15em;
+}
+
+.results-header .btn-clear {
+  background: none; border: none; color: #c27b82; font-size: 12px;
+}
