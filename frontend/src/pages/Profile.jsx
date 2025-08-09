@@ -101,8 +101,8 @@ const Profile = () => {
         return;
         }
 
-        // Aquí harías la llamada para guardar los cambios usando UserContext o API
-        // Por ahora mostramos alerta de éxito y salimos de modo edición
+        // Aquí hay que agregar el código para guardar los cambios en el perfil.
+        // Por ahora alerta de éxito y salimos de modo edición
 
         await MySwal.fire({
         title: "Profile updated",

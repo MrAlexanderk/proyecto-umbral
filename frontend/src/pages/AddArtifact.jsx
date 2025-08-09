@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Form, FormCheck } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -7,6 +7,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { UserContext } from '../context/UserContext';
 import '../styles/SignUp.css';
 import '../styles/Buttons.css';
+import ArtifactVisual from '../components/ArtifactVisual';
 
 const MySwal = withReactContent(Swal);
 
@@ -23,36 +24,47 @@ const categories = [
 
 const AddArtifact = () => {
   const navigate = useNavigate();
-  const { register } = useContext(UserContext);
 
   const [artifactName, setartifactName] = useState('');
   const [artifactType, setArtifactType] = useState("");
+  const [artifactOrigin, setArtifactOrigin] = useState('');
+  const [artifactAge, setArtifactAge] = useState('');
+  const [artifactPrice, setArtifactPrice] = useState('');
+  const [artifactHistory, setArtifactHistory] = useState('');
+  const [artifactImage, setArtifactImage] = useState(null);
+  const [artifactImageName, setArtifactImageName] = useState('');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [checks, setChecks] = useState({ one: false, two: false, three: false });
 
   const [touched, setTouched] = useState({
     artifactName: false,
+    artifactType: false,
+    artifactOrigin: false,
+    artifactAge: false,
+    artifactPrice: false,
+    artifactHistory: false,
     email: false,
     password: false,
     confirmPassword: false,
     checks: false,
   });
 
-  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isStrongPassword = (pass) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(pass);
-  const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
-
-  const allChecks = Object.values(checks).every(Boolean);
-
   const allValid =
     artifactName &&
-    isValidEmail(email) &&
-    isStrongPassword(password) &&
-    doPasswordsMatch &&
-    allChecks;
+    artifactType &&
+    artifactOrigin &&
+    artifactAge &&
+    artifactPrice &&
+    artifactHistory;
+  
+  const artifact = {
+    name: artifactName || "Artifact Name",
+    type: artifactType || "Artifact Type",
+    origin: artifactOrigin || "Origin",
+    age: artifactAge || "Artifact Age",
+    price: artifactPrice || "$$$$$",
+    history: artifactHistory || "Include a brief and REALISTIC history of the artifact.",
+    image: artifactImage || "../../src/assets/hero.jpg"
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,11 +72,10 @@ const AddArtifact = () => {
     if (!allValid) return;
 
     try {
-      await register({ email, password });
 
       await MySwal.fire({
-        title: "Registration successful!",
-        text: `The Threshold acknowledges your vows, ${artifactName}.`,
+        title: "Artifact added successful!",
+        text: `You added ${artifactName}.`,
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
@@ -76,13 +87,21 @@ const AddArtifact = () => {
         },
         timerProgressBar: true,
       });
-      navigate('/');
+      navigate('/profile');
     } catch (error) {
       MySwal.fire({
-        title: "Registration failed",
-        text: error.message || "An error occurred during registration.",
+        title: "Process failed",
+        text: error.message || "An error occurred during adding your artifact.",
         icon: "error",
       });
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setArtifactImage(URL.createObjectURL(file));
+      setArtifactImageName(file.name);
     }
   };
 
@@ -113,7 +132,7 @@ const AddArtifact = () => {
           </div>
 
           <div className="form-row mb-3">
-            <label>Artifact Type</label>
+            <label className="text-md">Artifact Type</label>
             <div className="input-icon-group">
               <select
                 value={artifactType}
@@ -132,89 +151,115 @@ const AddArtifact = () => {
               <p className="text-detail-error mb-0 text-danger">*Category is required</p>
             )}
           </div>
+          
+          <div className="form-row mb-3">
+            <label className="text-md">Artifact Origin</label>
+            <div className="input-icon-group">
+              <input
+                type="text"
+                placeholder="Your unholy artifact origin"
+                value={artifactOrigin}
+                onChange={(e) => setArtifactOrigin(e.target.value)}
+                onBlur={() => setTouched({ ...touched, artifactOrigin: true })}
+              />
+              {touched.artifactOrigin &&
+                (artifactOrigin ? <FaCheckCircle className="icon success" /> : <FaTimesCircle className="icon error" />)}
+            </div>
+            {touched.artifactOrigin && !artifactOrigin && (
+              <p className="text-detail-error mb-0 text-danger">*Artifact origin required</p>
+            )}
+          </div>
 
           <div className="form-row mb-3">
-            <label>Password</label>
+            <label className="text-md">Artifact Age</label>
             <div className="input-icon-group">
               <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onBlur={() => setTouched({ ...touched, password: true })}
+                type="number"
+                placeholder="Your unholy artifact Age"
+                value={artifactAge}
+                onChange={(e) => setArtifactAge(e.target.value)}
+                onBlur={() => setTouched({ ...touched, artifactAge: true })}
               />
-              {touched.password &&
-                (isStrongPassword(password) ? (
-                  <FaCheckCircle className="icon success" />
-                ) : (
-                  <FaTimesCircle className="icon error" />
-                ))}
+              {touched.artifactAge &&
+                (artifactAge ? <FaCheckCircle className="icon success" /> : <FaTimesCircle className="icon error" />)}
             </div>
-            {touched.password && !password && (
-              <p className="text-detail-error mb-0 text-danger">*Password is required</p>
-            )}
-            {touched.password && password && !isStrongPassword(password) && (
-              <p className="text-detail-error mb-0 text-danger">
-                *Password must contain at least 6 characters, including one number
-              </p>
+            {touched.artifactAge && !artifactAge && (
+              <p className="text-detail-error mb-0 text-danger">*Artifact Age required</p>
             )}
           </div>
 
-          <div className="form-row mb-4">
-            <label>Confirm Password</label>
+          <div className="form-row mb-3">
+            <label className="text-md">Artifact Price</label>
             <div className="input-icon-group">
               <input
-                type="password"
-                placeholder="Repeat password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                onBlur={() => setTouched({ ...touched, confirmPassword: true })}
+                type="number"
+                placeholder="Your unholy artifact Price"
+                value={artifactPrice}
+                onChange={(e) => setArtifactPrice(e.target.value)}
+                onBlur={() => setTouched({ ...touched, artifactPrice: true })}
               />
-              {touched.confirmPassword &&
-                (doPasswordsMatch ? (
-                  <FaCheckCircle className="icon success" />
-                ) : (
-                  <FaTimesCircle className="icon error" />
-                ))}
+              {touched.artifactPrice &&
+                (artifactPrice ? <FaCheckCircle className="icon success" /> : <FaTimesCircle className="icon error" />)}
             </div>
-            {touched.confirmPassword && !confirmPassword && (
-              <p className="text-detail-error mb-0 text-danger">*Please confirm your password</p>
-            )}
-            {touched.confirmPassword && confirmPassword && !doPasswordsMatch && (
-              <p className="text-detail-error mb-0 text-danger">*Passwords do not match</p>
+            {touched.artifactPrice && !artifactPrice && (
+              <p className="text-detail-error mb-0 text-danger">*Artifact Price required</p>
             )}
           </div>
 
-          <p className="terms-label">To join, you have to accept our Terms and Conditions:</p>
-
-          <div className="checkbox-group">
-            <FormCheck
-              type="checkbox"
-              id="check-1"
-              label="I have read and accept the Terms of the Pact."
-              className="checkbox-custom"
-              onChange={(e) => setChecks({ ...checks, one: e.target.checked })}
-              onBlur={() => setTouched({ ...touched, checks: true })}
-            />
-            <FormCheck
-              type="checkbox"
-              id="check-2"
-              label="I consent to the handling of my data by the Watchers Beyond."
-              className="checkbox-custom"
-              onChange={(e) => setChecks({ ...checks, two: e.target.checked })}
-            />
-            <FormCheck
-              type="checkbox"
-              id="check-3"
-              label="I understand that once inside, there is no turning back."
-              className="checkbox-custom"
-              onChange={(e) => setChecks({ ...checks, three: e.target.checked })}
-            />
+          <div className="form-row mb-3">
+            <label className="text-md">Artifact History</label>
+            <div className="input-icon-group">
+              <textarea
+                className="artifact-history-input"
+                placeholder="Your unholy artifact History"
+                value={artifactHistory}
+                onChange={(e) => setArtifactHistory(e.target.value)}
+                onBlur={() => setTouched({ ...touched, artifactHistory: true })}
+              />
+              {touched.artifactHistory &&
+                (artifactHistory ? ( <FaCheckCircle className="icon success" /> ) : ( <FaTimesCircle className="icon error" /> ))}
+            </div>
+            {touched.artifactHistory && !artifactHistory && (
+              <p className="text-detail-error mb-0 text-danger">*Artifact History required</p>
+            )}
           </div>
 
-          {touched.checks && !allChecks && (
-            <p className="text-detail-error text-danger">*You must accept all terms and conditions</p>
-          )}
+          <div className="d-flex justify-content-left add-image-container">
+            <input
+              type="file"
+              accept="image/*"
+              id="artifactImageInput"
+              style={{ display: 'none' }}
+              onChange={handleImageChange}
+            />
+            <button
+              type="button"
+              className="btn-secondary mt-3 text-s text-white add-image-btn"
+              onClick={() => document.getElementById('artifactImageInput').click()}
+            >
+              Select Image
+            </button>
+
+            {artifactImage ? (
+              <>
+                <p>Image loaded ✅</p>
+                <p>{artifactImageName}</p>
+              </>
+            ) : (
+              <p>Image not loaded.</p>
+            )}
+          </div>
+
+          <hr className="divider" />
+
+          <h2 className="text-white text-spectral mt-3">Preview</h2>
+          <p className="terms-label text-crimson mb-4">This is how your artifact will be displayed:</p>
+
+
+
+          <ArtifactVisual key={artifact.id} artifact={artifact}></ArtifactVisual>
+
+          <hr className="divider" />
 
           <div className="d-flex justify-content-center">
             <button
@@ -222,18 +267,11 @@ const AddArtifact = () => {
               className="btn-primary mt-3 text-md w-100"
               disabled={!allValid}
             >
-              Join
+              Add Artifact
             </button>
           </div>
         </Form>
 
-        <hr className="divider" />
-
-        <p className="text-center text-white-custom">
-          <Link to="/login" className="already-account link-none">
-            I Already have an account
-          </Link>
-        </p>
       </div>
     </div>
   );
