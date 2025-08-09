@@ -37,19 +37,28 @@ const ArtifactVisual = ({ artifact }) => {
                 <p className="m-0 p-0 text-s history-text">{artifact.history}</p>
             </div>
             <div className="right-side text-gray-custom">
-                <div className="py-1">
+                <div>
                     <h3 className="text-spectral text-s m-0 p-0">Origin</h3>
                     <p className="text-xs history-text"><em>{artifact.origin}</em></p>
                 </div>
-                <div className="py-1">
+                <div>
                     <h3 className="text-spectral text-s m-0 p-0">Age</h3>
                     <p className="text-xs history-text"><em>{artifact.age} y/o</em></p>  
                 </div>
-                <div className="py-1">
+                <div>
                     <h3 className="text-spectral text-s m-0 p-0">Seller</h3>
                     <p className="text-xs history-text"><em>{artifact.seller}</em></p>
                 </div>
             </div>
+        </div>
+        <div className="price-section">
+            <h2 className="">${artifact.price}</h2>
+            <button
+              type="button"
+              className="btn-secondary mt-3 text-md text-white-custom text-spectral add-bastket-btn"
+            >
+              Add to Basket
+            </button>
         </div>
     </div>
   );

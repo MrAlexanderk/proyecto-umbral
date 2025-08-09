@@ -63,3 +63,15 @@
     height: 100%;
     padding: 1rem;
 }
+
+.price-section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-bastket-btn{
+    padding: 0;
+    width: 40%;
+}

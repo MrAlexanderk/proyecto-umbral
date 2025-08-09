@@ -80,7 +80,7 @@ const AddArtifact = () => {
     description: artifactDescription || "Include a short Description",
     history: artifactHistory || "Include a brief and REALISTIC history of the artifact.",
     image: artifactImage || "../../src/assets/hero.jpg",
-    seller: profile.username || "Unknown Seller"
+    seller: profile?.username || "Unknown Seller"
   };
 
   const handleSubmit = async (e) => {
