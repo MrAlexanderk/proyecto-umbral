@@ -1,25 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
-
-import {
-  GiSkeleton,
-  GiMirrorMirror,
-  GiAncientSword,
-  GiDiamondRing,
-  GiClothes,
-} from "react-icons/gi";
-import { FaBookDead, FaMicrochip, FaQuestionCircle } from "react-icons/fa";
-
-const categories = [
-  { label: "Dolls", icon: GiSkeleton, to: "/category/dolls" },
-  { label: "Mirrors", icon: GiMirrorMirror, to: "/category/mirrors" },
-  { label: "Books", icon: FaBookDead, to: "/category/books" },
-  { label: "Tech", icon: FaMicrochip, to: "/category/tech" },
-  { label: "Relics", icon: GiAncientSword, to: "/category/relics" },
-  { label: "Lockets", icon: GiDiamondRing, to: "/category/lockets" },
-  { label: "Garments", icon: GiClothes, to: "/category/garments" },
-  { label: "Others", icon: FaQuestionCircle, to: "/category/others" },
-];
+import { CATEGORIES } from "./ArtifactsContext";
 
 export const UserContext = createContext();
 
@@ -29,7 +10,6 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  // Este useEffect se ejecuta solo al montar el Provider y lee localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedEmail = localStorage.getItem("email");
@@ -37,12 +17,12 @@ export const UserProvider = ({ children }) => {
     if (storedToken) setToken(storedToken);
     if (storedEmail) setEmail(storedEmail);
 
-    setLoading(false); // Termina de cargar
+    setLoading(false);
   }, []);
 
   const login = async (credentials) => {
     try {
-      // Fake login for demonstration purposes
+      // Fake login
       const fakeToken = "fake-jwt-token-1234567890";
       setToken(fakeToken);
 
@@ -67,7 +47,7 @@ export const UserProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      // Fake sign up for demonstration purposes
+      // Fake sign up por ahora
       const fakeToken = "fake-jwt-token-1234567890";
       setToken(fakeToken);
       setEmail(userData.email);
@@ -76,7 +56,6 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem("email", userData.email);
 
       /*
-      // Código original para registro con API, comentado
       const response = await axios.post(
         "http://localhost:5000/api/auth/register",
         userData
@@ -104,9 +83,9 @@ export const UserProvider = ({ children }) => {
 
   const getProfile = useCallback(async () => {
     try {
-      if(user) return user;
-      else{
-        // Datos falsos por el momento
+      if (user) return user;
+      else {
+        // Fake data
         const fakeUser = {
           username: "shadowhunter",
           email: "shadowhunter@umbral.com",
@@ -118,17 +97,15 @@ export const UserProvider = ({ children }) => {
         return fakeUser;
       }
 
-    /*
-    // Código real para cuando exista backend
-    const response = await axios.get("/api/auth/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setUser(response.data);
-    return response.data;
-    */
-
+      /*
+      const response = await axios.get("/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUser(response.data);
+      return response.data;
+      */
     } catch (error) {
       console.error("Failed to fetch profile:", error);
       return null;
@@ -137,7 +114,7 @@ export const UserProvider = ({ children }) => {
 
   const getArtifactsFromUser = async () => {
     try {
-      // Datos de prueba estáticos para desarrollo
+      // Datos de prueba (asignados al user)
       const testData = [
         {
           id: 1,
@@ -151,7 +128,7 @@ export const UserProvider = ({ children }) => {
           age: "476",
           origin: "España",
           created_at: "2024-12-01T10:00:00Z",
-          image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop"
         },
         {
           id: 2,
@@ -165,14 +142,13 @@ export const UserProvider = ({ children }) => {
           age: "23",
           origin: "Japón",
           created_at: "2025-01-15T14:30:00Z",
-          image: "https://images.unsplash.com/photo-1438012940875-4bf705025a8a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          image: "https://images.unsplash.com/photo-1438012940875-4bf705025a8a?q=80&w=1170&auto=format&fit=crop"
         }
       ];
 
       return testData;
 
       /*
-      // Código real comentado para el backend
       const response = await axios.get("/artifacts/user", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -188,16 +164,14 @@ export const UserProvider = ({ children }) => {
 
   const addArtifact = async (artifactData) => {
     try {
-      // --- Datos de prueba para desarrollo ---
       console.log("Simulación: enviando artifact al backend:", artifactData);
       return {
-        id: Math.floor(Math.random() * 10000), // id simulado
+        id: Math.floor(Math.random() * 10000),
         ...artifactData,
         created_at: new Date().toISOString(),
       };
 
       /*
-      // --- Código real para backend ---
       const response = await axios.post(
         "http://localhost:5000/api/artifacts",
         artifactData,
@@ -209,7 +183,6 @@ export const UserProvider = ({ children }) => {
       );
       return response.data;
       */
-
     } catch (error) {
       console.error("Failed to add artifact:", error);
       throw error;
@@ -219,7 +192,6 @@ export const UserProvider = ({ children }) => {
   const updateProfile = async (updatedData) => {
     try {
       /*
-      // Código real para backend (descomenta y ajusta URL)
       const response = await axios.put(
         "/api/auth/me",
         updatedData,
@@ -232,7 +204,6 @@ export const UserProvider = ({ children }) => {
       return response.data;
       */
 
-      // Fake update (simulación por ahora)
       console.log("Updating profile with data:", updatedData);
 
       if (updatedData.email) {
@@ -246,7 +217,6 @@ export const UserProvider = ({ children }) => {
         passwordLength: updatedData.password ? updatedData.password.length : prevUser?.passwordLength || 8,
       }));
 
-      // Retornar el perfil actualizado (fake)
       return {
         ...user,
         ...updatedData,
@@ -258,41 +228,30 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-
-
   const getTypeNameById = useCallback(
     async (id) => {
-      // Código real backend:
-      /*
-      try {
-        const response = await axios.get('/api/types');
-        const types = response.data;
-        const found = types.find((type) => type.id === id);
-        return found ? found.name : null;
-      } catch (error) {
-        console.error("Failed to fetch types:", error);
-        return null;
-      }
-      */
-
-      // Código falso/hardcodeado:
-      // Nota: asumiendo que id corresponde a índice+1 en categories
-      const index = id - 1;
-      if (index >= 0 && index < categories.length) {
-        return categories[index].label;
-      }
-      return null;
+      const found = CATEGORIES.find((cat) => cat.id === Number(id));
+      return found ? found.label : null;
     },
     []
   );
 
-
   return (
     <UserContext.Provider
-      value={{ token, email, user, login, register, 
-        logout, getProfile, loading, updateProfile, 
-        getArtifactsFromUser, addArtifact, getTypeNameById
-       }}
+      value={{
+        token,
+        email,
+        user,
+        login,
+        register,
+        logout,
+        getProfile,
+        loading,
+        updateProfile,
+        getArtifactsFromUser,
+        addArtifact,
+        getTypeNameById
+      }}
     >
       {children}
     </UserContext.Provider>
