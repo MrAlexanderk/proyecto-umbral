@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 import NotFound from "./pages/NotFound.jsx";
+import Collections from "./pages/Collections.jsx"
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import LogIn from './pages/LogIn';
@@ -27,6 +28,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="*" element={<NotFound />} />
+        <Route path="/collections" element={<Collections/>} />
         <Route path="/" element={<Home />} />
         <Route path="/artifacts" element={<ArtifactView />} />
         <Route

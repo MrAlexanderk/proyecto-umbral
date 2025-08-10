@@ -34,7 +34,7 @@ const ArtifactVisual = ({ artifact }) => {
 
       await MySwal.fire({
         icon: "success",
-        timer: 1600,
+        timer: 1000,
         title: "Added to basket",
         text: `${artifact.name} fue agregado al carrito`,
         customClass: {
@@ -49,7 +49,7 @@ const ArtifactVisual = ({ artifact }) => {
     } catch (error) {
       await MySwal.fire({
         icon: "error",
-        timer: 2000,
+        timer: 1600,
         title: "Add to basket failed",
         text: error.message || "No se pudo agregar el producto",
         customClass: {
