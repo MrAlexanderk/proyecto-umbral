@@ -6,10 +6,8 @@ const CategoryButton = ({ icon: Icon, name, route }) => {
 
   const handleClick = () => {
     if (typeof route === "function") {
-      // si recibimos una función, la ejecutamos
       route();
     } else if (typeof route === "string") {
-      // si recibimos un string, navegamos a esa ruta
       navigate(route);
     }
   };

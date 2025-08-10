@@ -8,6 +8,8 @@ import {
 } from "react-icons/gi";
 import { FaBookDead, FaMicrochip, FaQuestionCircle } from "react-icons/fa";
 
+
+// Por ahora están aquí, después con el backend lo actualizaré
 export const CATEGORIES = [
   { id: 1, label: "Dolls",    icon: GiSkeleton,      to: "/category/dolls" },
   { id: 2, label: "Mirrors",  icon: GiMirrorMirror,  to: "/category/mirrors" },
@@ -20,7 +22,7 @@ export const CATEGORIES = [
 ];
 
 
-// ------- Datos dummy (type_id 1-based para coincidir con UserContext) -------
+// ------- Datos dummy (type_id para coincidir con UserContext) -------
 const DUMMY = [
   {
     id: 1,

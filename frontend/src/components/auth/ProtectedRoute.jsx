@@ -20,12 +20,12 @@ const ProtectedRoute = ({ children }) => {
         },
       });
     } else {
-      Swal.close(); // Cierra el loading cuando ya no esté cargando
+      Swal.close();
     }
   }, [loading]);
 
   if (loading) {
-    // Si aún está cargando, no renderiza nada. Agregar un componente
+    // Si aún está cargando, no renderiza nada. Tengo que agregar algún componente de fondo.
     return null;
   }
 
