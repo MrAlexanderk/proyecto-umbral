@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import AddArtifact from './pages/AddArtifact';
 import ArtifactView from './pages/ArtifactView';
 import ArtifactSingle from './pages/ArtifactSingle';
+import Cart from "./pages/Cart"
 import Footer from './components/Footer';
 
 import { UserContext } from './context/UserContext';
@@ -56,6 +57,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ArtifactSingle />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
             </ProtectedRoute>
           }
         />

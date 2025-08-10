@@ -7,16 +7,18 @@ import App from './App.jsx'
 import { AppProvider } from './context/AppContext.jsx';
 import UserProvider from './context/UserContext.jsx';
 import { ArtifactsProvider } from './context/ArtifactsContext.jsx';
-
+import CartProvider from "./context/CartContext.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ArtifactsProvider>
-      <UserProvider>
-        <AppProvider>
-          <App />
-        </AppProvider>
-      </UserProvider>
+      <CartProvider>
+        <UserProvider>
+          <AppProvider>
+            <App />
+          </AppProvider>
+        </UserProvider>
+      </CartProvider>
     </ArtifactsProvider>
   </StrictMode>,
 )
