@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import "../styles/ArtifactsStyles.css";
 
@@ -10,8 +11,7 @@ const ArtifactView = () => {
   const { artifacts, categories, getCategoryLabelById } = useArtifacts();
 
   const [query, setQuery] = useState("");
-  // por defecto "Books", como en el mockup
-  const [selectedTypes, setSelectedTypes] = useState(new Set(["Books"]));
+  const [selectedTypes, setSelectedTypes] = useState(new Set());
 
   const toggleType = (label) => {
     setSelectedTypes((prev) => {
@@ -20,6 +20,16 @@ const ArtifactView = () => {
       return next;
     });
   };
+
+    const location = useLocation();
+    useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const typeParam = params.get("type");
+    if (typeParam) {
+        setSelectedTypes(new Set([typeParam]));
+    }
+    }, [location.search]);
+
   const clearTypes = () => setSelectedTypes(new Set());
 
   const filtered = useMemo(() => {

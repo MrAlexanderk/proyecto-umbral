@@ -8,7 +8,6 @@ import {
 } from "react-icons/gi";
 import { FaBookDead, FaMicrochip, FaQuestionCircle } from "react-icons/fa";
 
-/** Categorías 1-based (mismo orden que en UserContext) */
 export const CATEGORIES = [
   { id: 1, label: "Dolls",    icon: GiSkeleton,      to: "/category/dolls" },
   { id: 2, label: "Mirrors",  icon: GiMirrorMirror,  to: "/category/mirrors" },
@@ -111,7 +110,6 @@ export const ArtifactsProvider = ({ children }) => {
     [getCategoryById]
   );
 
-  /** Si luego conectas backend, expón una función para traer artefactos del “mercado” */
   const getAllArtifacts = useCallback(async () => {
     // TODO: reemplazar por fetch real
     return artifacts;
@@ -122,11 +120,11 @@ export const ArtifactsProvider = ({ children }) => {
       artifacts,
       setArtifacts,
       getAllArtifacts,
-      categories: CATEGORIES,        // acceso directo
-      getCategories,                 // función para obtener todas
-      getCategoryById,               // objeto categoría
-      getCategoryLabelById,          // string label
-      getCategoryIconById,           // componente Icon
+      categories: CATEGORIES,
+      getCategories,                
+      getCategoryById,               
+      getCategoryLabelById,        
+      getCategoryIconById,           
     }),
     [
       artifacts,
