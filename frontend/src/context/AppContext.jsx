@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 const AppContext = createContext();
 
-export function AppProvider({ children }) {
+function AppProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
 
   return (
@@ -12,6 +12,9 @@ export function AppProvider({ children }) {
   );
 }
 
-export function useAppContext() {
+function useAppContext() {
   return useContext(AppContext);
 }
+
+export default AppProvider;
+export { useAppContext };
