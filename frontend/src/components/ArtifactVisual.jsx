@@ -51,7 +51,7 @@ const ArtifactVisual = ({ artifact }) => {
             </div>
         </div>
         <div className="price-section">
-            <h2 className="">${artifact.price}</h2>
+            <h2 className="text-white-custom">${artifact.price}</h2>
             <button
               type="button"
               className="btn-secondary mt-3 text-md text-white-custom text-spectral add-bastket-btn"

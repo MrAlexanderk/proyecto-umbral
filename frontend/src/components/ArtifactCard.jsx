@@ -5,7 +5,7 @@ import "../styles/styles.css";
 import { UserContext } from "../context/UserContext";
 
 const ArtifactCard = ({ artifact }) => {
-  const { getTypeNameById } = useContext(UserContext);
+  const { getTypeNameById, token } = useContext(UserContext);
   const [typeName, setTypeName] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,7 +47,7 @@ const ArtifactCard = ({ artifact }) => {
           className="btn-secondary mt-3 text-s w-100 text-white-custom text-spectral"
           onClick={goToDetail}
         >
-          Dare To Learn More
+          {token ? "Dare To Learn More" : "Join to Learn More"}
         </button>
       </div>
     </div>

@@ -37,7 +37,7 @@ const ArtifactSingle = () => {
   }
 
   return (
-    <section className="bg-color-dark py-4">
+    <section className="bg-color-dark py-4 signup-container">
       <Container>
         <button
           type="button"
