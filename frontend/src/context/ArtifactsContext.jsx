@@ -325,6 +325,7 @@ export const ArtifactsProvider = ({ children }) => {
 
   const getAllArtifacts = useCallback(async () => {
     // TODO: reemplazar por fetch real
+    // Tengo que revisarlo de todas formas porque tengo que ajustarlo para que los filtros los haga SQL
     return artifacts;
   }, [artifacts]);
 

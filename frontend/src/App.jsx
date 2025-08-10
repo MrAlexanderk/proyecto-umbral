@@ -12,6 +12,7 @@ import LogIn from './pages/LogIn';
 import Profile from './pages/Profile';
 import AddArtifact from './pages/AddArtifact';
 import ArtifactView from './pages/ArtifactView';
+import ArtifactSingle from './pages/ArtifactSingle';
 import Footer from './components/Footer';
 
 import { UserContext } from './context/UserContext';
@@ -47,6 +48,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AddArtifact />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/artifacts/:id"
+          element={
+            <ProtectedRoute>
+              <ArtifactSingle />
             </ProtectedRoute>
           }
         />
