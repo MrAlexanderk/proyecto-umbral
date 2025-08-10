@@ -18,7 +18,7 @@ export default function Cart() {
   const total = subtotal + taxes;
 
   return (
-    <section className="bg-color-dark py-4 text-crimson">
+    <section className="bg-color-dark py-4 text-crimson signup-container">
       <Container>
         <header className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
           <h1 className="text-spectral text-white-custom m-0">Your Basket</h1>
@@ -32,12 +32,14 @@ export default function Cart() {
         {items.length === 0 ? (
           <p className="text-gray-custom">Your basket is empty.</p>
         ) : (
-          <Row className="g-4">
-            <Col lg={8}>
+          <Row className="g-4 text-crimson">
+            {/* Lista de ítems */}
+            <Col xs={12}>
               <ul className="list-unstyled m-0 p-0">
                 {items.map(({ artifact, qty }) => (
                   <li key={artifact.id} className="artifact-card p-2 mb-3">
-                    <div className="d-flex gap-3 align-items-start">
+                    <div className="d-flex justify-content-between align-items-start gap-3 w-100 py-2 px-3">
+                      {/* Imagen */}
                       {artifact.image && (
                         <img
                           src={artifact.image}
@@ -46,6 +48,7 @@ export default function Cart() {
                         />
                       )}
 
+                      {/* Info del producto */}
                       <div className="flex-grow-1 text-gray-custom">
                         <h3 className="text-white-custom text-spectral m-0">{artifact.name}</h3>
                         <div className="small mt-1">
@@ -53,45 +56,52 @@ export default function Cart() {
                         </div>
                         <div className="small">
                           Unit: <strong>{formatMoney(artifact.price)}</strong>
+                          
+                        </div>
+
+                        
+                      </div>
+
+                      {/* Precio alineado a la derecha */}
+
+                      <div>
+                        <div
+                          className="text-white-custom text-spectral"
+                          style={{ minWidth: 100, textAlign: "right" }}
+                        >
+                          {formatMoney((artifact.price || 0) * qty)}
                         </div>
 
                         <div className="d-flex align-items-center gap-2 mt-2">
-                          <button
-                            className="btn-secondary text-white-custom text-s"
-                            onClick={() => setQty(artifact.id, Math.max(0, qty - 1))}
-                            aria-label="Decrease quantity"
-                          >
-                            <FaMinus />
-                          </button>
-                          <span
-                            className="text-white-custom"
-                            style={{ minWidth: 24, textAlign: "center" }}
-                          >
-                            {qty}
-                          </span>
-                          <button
-                            className="btn-secondary text-white-custom text-s"
-                            onClick={() => setQty(artifact.id, qty + 1)}
-                            aria-label="Increase quantity"
-                          >
-                            <FaPlus />
-                          </button>
+                            <button
+                              className="btn-secondary text-white-custom text-s"
+                              onClick={() => setQty(artifact.id, Math.max(0, qty - 1))}
+                              aria-label="Decrease quantity"
+                            >
+                              <FaMinus />
+                            </button>
+                            <p
+                              className="text-white-custom"
+                              style={{ minWidth: 24, textAlign: "center" }}
+                            >
+                              {qty}
+                            </p>
+                            <button
+                              className="btn-secondary text-white-custom text-s"
+                              onClick={() => setQty(artifact.id, qty + 1)}
+                              aria-label="Increase quantity"
+                            >
+                              <FaPlus />
+                            </button>
 
-                          <button
-                            className="btn-clear ms-2"
-                            onClick={() => removeItem(artifact.id)}
-                            aria-label="Remove item"
-                          >
-                            <FaTrash /> Remove
-                          </button>
-                        </div>
-                      </div>
-
-                      <div
-                        className="text-white-custom text-spectral"
-                        style={{ minWidth: 100, textAlign: "right" }}
-                      >
-                        {formatMoney((artifact.price || 0) * qty)}
+                            <button
+                              className="btn-clear ms-2"
+                              onClick={() => removeItem(artifact.id)}
+                              aria-label="Remove item"
+                            >
+                              <FaTrash /> Remove
+                            </button>
+                          </div>
                       </div>
                     </div>
                   </li>
@@ -99,16 +109,13 @@ export default function Cart() {
               </ul>
             </Col>
 
-            <Col lg={4}>
-              <aside className="artifact-card p-3">
+            {/* Checkout abajo */}
+            <Col xs={12}>
+              <aside className="artifact-card p-3 mt-1">
                 <h3 className="text-spectral text-white-custom m-0">Order Summary</h3>
                 <div className="d-flex justify-content-between mt-3 text-gray-custom">
-                  <span>Subtotal</span>
-                  <span>{formatMoney(subtotal)}</span>
-                </div>
-                <div className="d-flex justify-content-between text-gray-custom">
-                  <span>Taxes</span>
-                  <span>{formatMoney(taxes)}</span>
+                  <p>Subtotal</p>
+                  <p>{formatMoney(subtotal)}</p>
                 </div>
                 <hr className="my-3" />
                 <div className="d-flex justify-content-between align-items-center">

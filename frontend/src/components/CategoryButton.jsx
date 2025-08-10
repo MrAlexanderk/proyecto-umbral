@@ -15,9 +15,9 @@ const CategoryButton = ({ icon: Icon, name, route }) => {
   return (
     <button className="category-button" onClick={handleClick}>
       <Icon className="category-icon" />
-      <span className="category-name text-crimson text-md text-white-custom">
+      <p className="category-name text-crimson text-md text-white-custom">
         {name}
-      </span>
+      </p>
     </button>
   );
 };

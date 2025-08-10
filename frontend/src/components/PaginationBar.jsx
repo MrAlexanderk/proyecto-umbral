@@ -56,9 +56,9 @@ const PaginationBar = ({
                 {item}
               </button>
             ) : (
-              <span key={item + idx} className="text-gray-custom">
+              <p key={item + idx} className="text-gray-custom">
                 …
-              </span>
+              </p>
             )
           )}
         </div>
@@ -74,7 +74,7 @@ const PaginationBar = ({
       </div>
 
       <div className="d-flex align-items-center gap-2">
-        <span className="text-gray-custom small">Limit</span>
+        <p className="text-gray-custom small">Limit</p>
         <select 
           className="input-square"
           value={pageSize}

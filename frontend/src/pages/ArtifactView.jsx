@@ -233,7 +233,7 @@ const ArtifactView = () => {
           transform: open ? "rotate(0deg)" : "rotate(-90deg)",
         }}
       />
-      <span>{title}</span>
+      <p>{title}</p>
     </button>
   );
 
@@ -287,8 +287,8 @@ const ArtifactView = () => {
                                 checked={selectedTypes.has(c.label)}
                                 onChange={() => toggleType(c.label)}
                               />
-                              <span className="icon"><Icon /></span>
-                              <span>{c.label}</span>
+                              <p className="icon"><Icon /></p>
+                              <p>{c.label}</p>
                             </label>
                           </li>
                         );
@@ -318,7 +318,7 @@ const ArtifactView = () => {
                               checked={selectedOrigins.has(o)}
                               onChange={() => toggleOrigin(o)}
                             />
-                            <span>{o}</span>
+                            <p>{o}</p>
                           </label>
                         </li>
                       ))}

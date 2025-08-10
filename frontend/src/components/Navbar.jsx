@@ -7,6 +7,7 @@ import PrimaryButton from './buttons/PrimaryButton';
 import SecondaryButton from './buttons/SecondaryButton';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import { useCart } from '../context/CartContext.jsx';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -14,6 +15,7 @@ const MySwal = withReactContent(Swal);
 
 const Navbar = () => {
   const { token, email, logout } = useContext(UserContext);
+  const { count } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -68,8 +70,15 @@ const Navbar = () => {
             
             {token && (<><NavLink className="nav-link" to="/profile">My Profile</NavLink></>)}
 
-            <NavLink className="nav-link" to="/cart">
+            <NavLink className="nav-link position-relative" to="/cart">
               <FaShoppingCart size={18} />
+              {count > 0 && (
+                <p
+                  className="position-absolute top-20 start-180 translate-middle badge rounded-pill text-xs"
+                >
+                  {count}
+                </p>
+              )}
             </NavLink>
 
             {token ? (

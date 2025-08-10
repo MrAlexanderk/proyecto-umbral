@@ -303,7 +303,7 @@ const DUMMY = [
 ];
 
 
-const ArtifactsContext = createContext(null);
+export const ArtifactsContext = createContext();
 
 export const ArtifactsProvider = ({ children }) => {
   const [artifacts, setArtifacts] = useState(DUMMY);
@@ -329,34 +329,28 @@ export const ArtifactsProvider = ({ children }) => {
     return artifacts;
   }, [artifacts]);
 
-  const value = useMemo(
-    () => ({
-      artifacts,
-      setArtifacts,
-      getAllArtifacts,
-      categories: CATEGORIES,
-      getCategories,                
-      getCategoryById,               
-      getCategoryLabelById,        
-      getCategoryIconById,           
-    }),
-    [
-      artifacts,
-      getAllArtifacts,
-      getCategories,
-      getCategoryById,
-      getCategoryLabelById,
-      getCategoryIconById,
-    ]
-  );
-
   return (
-    <ArtifactsContext.Provider value={value}>{children}</ArtifactsContext.Provider>
+    <ArtifactsContext.Provider
+      value={{
+        artifacts,
+        setArtifacts,
+        getAllArtifacts,
+        categories: CATEGORIES,
+        getCategories,
+        getCategoryById,
+        getCategoryLabelById,
+        getCategoryIconById
+      }}
+    >
+      {children}
+    </ArtifactsContext.Provider>
   );
 };
 
 export const useArtifacts = () => {
-  const ctx = useContext(ArtifactsContext);
-  if (!ctx) throw new Error("useArtifacts debe usarse dentro de ArtifactsProvider");
+  const ctx = React.useContext(ArtifactsContext);
+  if (!ctx) throw new Error("useArtifacts debe usarse dentro de <ArtifactsProvider>");
   return ctx;
 };
+
+export default ArtifactsProvider;
