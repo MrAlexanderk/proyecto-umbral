@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import "../styles/Home.css";
 import CategoryButton from "../components/CategoryButton";
@@ -9,9 +9,25 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const { categories } = useArtifacts();
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState("");
 
   const handleCategoryClick = (categoryLabel) => {
     navigate(`/artifacts?type=${encodeURIComponent(categoryLabel)}`);
+  };
+
+  const handleSearch = () => {
+    const q = searchText.trim();
+    if (q) {
+      navigate(`/artifacts?query=${encodeURIComponent(q)}`);
+    } else {
+      navigate("/artifacts");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
   };
 
   return (
@@ -36,13 +52,23 @@ const Home = () => {
       <section className="search-section bg-color-dark">
         <Container className="text-center text-white-custom">
           <h2 className="text-spectral mb-4">Which artifact seeks a new keeper?</h2>
-          <div className="search-input-wrapper">
+          <div className="search-input-wrapper" style={{ display: "flex", alignItems: "center" }}>
             <FaSearch className="search-icon" />
             <input
               type="text"
               placeholder="Search for cursed artifacts..."
               aria-label="Search for cursed artifacts"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              style={{ flex: 1 }}
             />
+            <button
+              className="btn-primary m-2"
+              onClick={handleSearch}
+            >
+              Search
+            </button>
           </div>
         </Container>
       </section>

@@ -8,14 +8,16 @@
 }
 
 .filters-title {
-  color: #c6b8bb; text-transform: uppercase; letter-spacing: .16em;
+  color: #c6b8bb; 
+  text-transform: uppercase; 
+  letter-spacing: .16em;
   margin: 0 0 8px;
   font-size: 13px;
 }
 
 .filter-subtitle { margin: 8px 0; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; }
 .filter-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-.filter-check { display: flex; gap: 8px; align-items: center; color: #d6c8cb; }
+.filter-check { display: flex; gap: 8px; align-items: center; color: #d6c8cb; padding-left: 1rem; }
 .filter-check input { width: 14px; height: 14px; accent-color: #7c0a1b; }
 .filter-check .icon { width: 18px; display: inline-grid; place-items: center; opacity: .9; }
 
@@ -26,6 +28,17 @@
   text-transform: uppercase; font-size: 11px; letter-spacing: .15em;
 }
 
-.results-header .btn-clear {
-  background: none; border: none; color: #c27b82; font-size: 12px;
+.btn-clear {
+  background: none; 
+  border: none; 
+  color: #c27b82;
+  font-size: 12px;
+}
+
+.input-square{
+  background-color: var(--color-transparent);
+  color: var(--color-white);
+  border-radius: 0.25rem;
+  border: 0.05rem solid var(--color-gray);
+  width: 75%;
 }

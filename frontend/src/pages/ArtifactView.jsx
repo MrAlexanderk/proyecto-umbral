@@ -1,17 +1,28 @@
 import { useMemo, useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaChevronDown } from "react-icons/fa";
 import "../styles/ArtifactsStyles.css";
 
 import ArtifactRow from "../components/ArtifactRow";
 import { useArtifacts } from "../context/ArtifactsContext";
+
+// ESTE COMPONENTE ESTÁ CREADO DE FORMA DUMMY PORQUE NO TENGO EL BACKEND TODAVÍA
+// APENAS LO TENGA CAMBIARÁ COMPLETAMENTE PARA UTILIZAR EL URL AL IGUAL QUE HACEN LOS BOTONES DE LAS CATEGORÍAS DEl HOME
+// PERO LA VERDAD CREO QUE ES MÁS FÁCIL PARA ESTE COMPONENTE EN PARTICULAR HACERLO EN CONJUNTO CON EL BACK END <3
 
 const ArtifactView = () => {
   const { artifacts, categories, getCategoryLabelById } = useArtifacts();
 
   const [query, setQuery] = useState("");
   const [selectedTypes, setSelectedTypes] = useState(new Set());
+  const [selectedOrigins, setSelectedOrigins] = useState(new Set());
+
+  // Estados de colapso por sección
+  const [openType, setOpenType] = useState(true);
+  const [openOrigin, setOpenOrigin] = useState(true);
+  const [openAge, setOpenAge] = useState(true);
+  const [openPrice, setOpenPrice] = useState(true);
 
   const toggleType = (label) => {
     setSelectedTypes((prev) => {
@@ -21,33 +32,170 @@ const ArtifactView = () => {
     });
   };
 
-    const location = useLocation();
-    useEffect(() => {
+  const toggleOrigin = (origin) => {
+    setSelectedOrigins((prev) => {
+      const next = new Set(prev);
+      next.has(origin) ? next.delete(origin) : next.add(origin);
+      return next;
+    });
+  };
+
+  const location = useLocation();
+
+  // Lee parámetros de la URL (type y query) y los aplica al estado
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const typeParam = params.get("type");
+    const queryParam = params.get("query");
+
     if (typeParam) {
-        setSelectedTypes(new Set([typeParam]));
+      setSelectedTypes(new Set([typeParam]));
+    } else {
+      setSelectedTypes((prev) => prev); // no tocar si no viene
     }
-    }, [location.search]);
+
+    if (typeof queryParam === "string") {
+      setQuery(queryParam);
+    }
+  }, [location.search]);
+
+  // Orígenes únicos derivados de los artefactos (ordenados alfabéticamente)
+  const allOrigins = useMemo(() => {
+    const set = new Set(artifacts.map((a) => a.origin).filter(Boolean));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [artifacts]);
+
+  // Rango de edad/price detectado desde datos
+  const { dataAgeMin, dataAgeMax, dataPriceMin, dataPriceMax } = useMemo(() => {
+    const ages = artifacts.map((a) => a.age ?? 0);
+    const prices = artifacts.map((a) => a.price ?? 0);
+    return {
+      dataAgeMin: ages.length ? Math.min(...ages) : 0,
+      dataAgeMax: ages.length ? Math.max(...ages) : 0,
+      dataPriceMin: prices.length ? Math.min(...prices) : 0,
+      dataPriceMax: prices.length ? Math.max(...prices) : 0,
+    };
+  }, [artifacts]);
+
+  // Valores controlados de los inputs de rango
+  const [ageMin, setAgeMin] = useState(0);
+  const [ageMax, setAgeMax] = useState(0);
+  const [priceMin, setPriceMin] = useState(0);
+  const [priceMax, setPriceMax] = useState(0);
+
+  // Re-Inicializa cuando llegan/ cambian datos
+  useEffect(() => {
+    setAgeMin(dataAgeMin);
+    setAgeMax(dataAgeMax);
+    setPriceMin(dataPriceMin);
+    setPriceMax(dataPriceMax);
+  }, [dataAgeMin, dataAgeMax, dataPriceMin, dataPriceMax]);
 
   const clearTypes = () => setSelectedTypes(new Set());
+  const clearOrigins = () => setSelectedOrigins(new Set());
+  const clearAge = () => {
+    setAgeMin(dataAgeMin);
+    setAgeMax(dataAgeMax);
+  };
+  const clearPrice = () => {
+    setPriceMin(dataPriceMin);
+    setPriceMax(dataPriceMax);
+  };
+  const clearQuery = () => setQuery("");
+  const clearAll = () => {
+    clearQuery();
+    clearTypes();
+    clearOrigins();
+    clearAge();
+    clearPrice();
+  };
 
+  const clampNumber = (v, min, max) => {
+    const n = Number.isFinite(+v) ? +v : min;
+    return Math.min(Math.max(n, min), max);
+  };
+
+  // --- FILTRADO ---
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
+
+    const minAge = Math.min(ageMin, ageMax);
+    const maxAge = Math.max(ageMin, ageMax);
+    const minPrice = Math.min(priceMin, priceMax);
+    const maxPrice = Math.max(priceMin, priceMax);
+
     return artifacts.filter((a) => {
+      // Texto
       const nameOk =
         !q ||
-        a.name.toLowerCase().includes(q) ||
-        a.history.toLowerCase().includes(q) ||
-        a.origin.toLowerCase().includes(q);
+        (a.name && a.name.toLowerCase().includes(q)) ||
+        (a.history && a.history.toLowerCase().includes(q)) ||
+        (a.origin && a.origin.toLowerCase().includes(q));
 
-      // type_id ahora es 1-based; tomamos el label desde el context
+      // Tipo
       const typeName = getCategoryLabelById(a.type_id);
       const typeOk = selectedTypes.size === 0 || selectedTypes.has(typeName);
 
-      return nameOk && typeOk;
+      // Origen
+      const originOk =
+        selectedOrigins.size === 0 || selectedOrigins.has(a.origin);
+
+      // Edad
+      const ageVal = a.age ?? 0;
+      const ageOk = ageVal >= minAge && ageVal <= maxAge;
+
+      // Precio
+      const priceVal = a.price ?? 0;
+      const priceOk = priceVal >= minPrice && priceVal <= maxPrice;
+
+      return nameOk && typeOk && originOk && ageOk && priceOk;
     });
-  }, [artifacts, query, selectedTypes, getCategoryLabelById]);
+  }, [
+    artifacts,
+    query,
+    selectedTypes,
+    selectedOrigins,
+    ageMin,
+    ageMax,
+    priceMin,
+    priceMax,
+    getCategoryLabelById,
+  ]);
+
+  const formatMoney = (n) =>
+    new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(n);
+
+  const HeaderToggle = ({ open, onClick, title, controlsId }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={open}
+      aria-controls={controlsId}
+      style={{
+        background: "none",
+        border: "none",
+        color: "inherit",
+        padding: 0,
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        cursor: "pointer",
+      }}
+      title={open ? "Ocultar" : "Mostrar"}
+    >
+      <FaChevronDown
+        style={{
+          transition: "transform 0.2s ease",
+          transform: open ? "rotate(0deg)" : "rotate(-90deg)",
+        }}
+      />
+      <span>{title}</span>
+    </button>
+  );
 
   return (
     <>
@@ -68,34 +216,202 @@ const ArtifactView = () => {
       </section>
 
       {/* Contenido */}
-      <section className="bg-color-dark py-4">
+      <section className="bg-color-dark py-4 text-crimson">
         <Container>
           <Row>
             {/* Sidebar de filtros */}
             <Col lg={3} className="mb-4">
               <div className="filters-panel">
-                <h3 className="filters-title">Filtros</h3>
+                <h3 className="filters-title text-spectral">Filtros</h3>
 
+                {/* Type */}
                 <div className="filter-group">
-                  <h4 className="filter-subtitle">Type</h4>
-                  <ul className="filter-list">
-                    {categories.map((c) => {
-                      const Icon = c.icon;
-                      return (
-                        <li key={c.id}>
+                  <h4 className="filter-subtitle d-flex justify-content-between align-items-center text-white-custom">
+                    <HeaderToggle
+                      open={openType}
+                      onClick={() => setOpenType((v) => !v)}
+                      title="Type"
+                      controlsId="filter-type"
+                    />
+                    <button className="btn-clear" onClick={clearTypes}>
+                      Limpiar
+                    </button>
+                  </h4>
+                  <div id="filter-type" hidden={!openType}>
+                    <ul className="filter-list">
+                      {categories.map((c) => {
+                        const Icon = c.icon;
+                        return (
+                          <li key={c.id}>
+                            <label className="filter-check">
+                              <input
+                                type="checkbox"
+                                checked={selectedTypes.has(c.label)}
+                                onChange={() => toggleType(c.label)}
+                              />
+                              <span className="icon">
+                                <Icon />
+                              </span>
+                              <span>{c.label}</span>
+                            </label>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Origin */}
+                <div className="filter-group">
+                  <h4 className="filter-subtitle d-flex justify-content-between align-items-center text-white-custom">
+                    <HeaderToggle
+                      open={openOrigin}
+                      onClick={() => setOpenOrigin((v) => !v)}
+                      title="Origin"
+                      controlsId="filter-origin"
+                    />
+                    <button className="btn-clear" onClick={clearOrigins}>
+                      Limpiar
+                    </button>
+                  </h4>
+                  <div id="filter-origin" hidden={!openOrigin}>
+                    <ul className="filter-list">
+                      {allOrigins.map((o) => (
+                        <li key={o}>
                           <label className="filter-check">
                             <input
                               type="checkbox"
-                              checked={selectedTypes.has(c.label)}
-                              onChange={() => toggleType(c.label)}
+                              checked={selectedOrigins.has(o)}
+                              onChange={() => toggleOrigin(o)}
                             />
-                            <span className="icon"><Icon /></span>
-                            <span>{c.label}</span>
+                            <span>{o}</span>
                           </label>
                         </li>
-                      );
-                    })}
-                  </ul>
+                      ))}
+                      {allOrigins.length === 0 && (
+                        <li className="text-gray-custom small">
+                          No hay orígenes disponibles
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Age */}
+                <div className="filter-group">
+                  <h4 className="filter-subtitle d-flex justify-content-between align-items-center text-white-custom">
+                    <HeaderToggle
+                      open={openAge}
+                      onClick={() => setOpenAge((v) => !v)}
+                      title="Age (years)"
+                      controlsId="filter-age"
+                    />
+                    <button className="btn-clear" onClick={clearAge}>
+                      Reset
+                    </button>
+                  </h4>
+                  <div id="filter-age" hidden={!openAge}>
+                    <div className="range-row text-gray-custom">
+                      <div className="range-field">
+                        <label className="range-label m-2">Min</label>
+                        <input
+                          className="input-square"
+                          type="number"
+                          min={dataAgeMin}
+                          max={dataAgeMax}
+                          value={ageMin}
+                          onChange={(e) =>
+                            setAgeMin(
+                              clampNumber(e.target.value, dataAgeMin, dataAgeMax)
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="range-sep">—</div>
+                      <div className="range-field">
+                        <label className="range-label m-2">Max</label>
+                        <input
+                          className="input-square"
+                          type="number"
+                          min={dataAgeMin}
+                          max={dataAgeMax}
+                          value={ageMax}
+                          onChange={(e) =>
+                            setAgeMax(
+                              clampNumber(e.target.value, dataAgeMin, dataAgeMax)
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="tiny-hint text-gray-custom">
+                      Rango de datos: {dataAgeMin}–{dataAgeMax}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="filter-group">
+                  <h4 className="filter-subtitle d-flex justify-content-between align-items-center text-white-custom">
+                    <HeaderToggle
+                      open={openPrice}
+                      onClick={() => setOpenPrice((v) => !v)}
+                      title="Price"
+                      controlsId="filter-price"
+                    />
+                    <button className="btn-clear" onClick={clearPrice}>
+                      Reset
+                    </button>
+                  </h4>
+                  <div id="filter-price" hidden={!openPrice}>
+                    <div className="range-row text-gray-custom">
+                      <div className="range-field">
+                        <label className="range-label m-2">Min</label>
+                        <input
+                          className="input-square"
+                          type="number"
+                          min={dataPriceMin}
+                          max={dataPriceMax}
+                          step="100"
+                          value={priceMin}
+                          onChange={(e) =>
+                            setPriceMin(
+                              clampNumber(
+                                e.target.value,
+                                dataPriceMin,
+                                dataPriceMax
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="range-sep">—</div>
+                      <div className="range-field">
+                        <label className="range-label m-2">Max</label>
+                        <input
+                          className="input-square"
+                          type="number"
+                          min={dataPriceMin}
+                          max={dataPriceMax}
+                          step="100"
+                          value={priceMax}
+                          onChange={(e) =>
+                            setPriceMax(
+                              clampNumber(
+                                e.target.value,
+                                dataPriceMin,
+                                dataPriceMax
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="tiny-hint text-gray-custom">
+                      Rango de datos: {formatMoney(dataPriceMin)}–
+                      {formatMoney(dataPriceMax)}
+                    </div>
+                  </div>
                 </div>
               </div>
             </Col>
@@ -103,11 +419,27 @@ const ArtifactView = () => {
             {/* Resultados */}
             <Col lg={9}>
               <div className="results-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <div className="text-white-50 small">Resultados encontrados para:</div>
+                <div className="text-gray-custom small">
+                  Resultados encontrados para:
+                </div>
+
+                {/* Chips de filtros activos */}
                 <div className="chips d-flex flex-wrap gap-2">
+                  {/* Query */}
+                  {query.trim() !== "" && (
+                    <button
+                      className="chip"
+                      onClick={clearQuery}
+                      title="Quitar búsqueda"
+                    >
+                      “{query.trim()}”
+                    </button>
+                  )}
+
+                  {/* Types */}
                   {[...selectedTypes].map((t) => (
                     <button
-                      key={t}
+                      key={`type-${t}`}
                       className="chip"
                       onClick={() => toggleType(t)}
                       title="Quitar filtro"
@@ -115,8 +447,39 @@ const ArtifactView = () => {
                       {t}
                     </button>
                   ))}
+
+                  {/* Origins */}
+                  {[...selectedOrigins].map((o) => (
+                    <button
+                      key={`origin-${o}`}
+                      className="chip"
+                      onClick={() => toggleOrigin(o)}
+                      title="Quitar filtro"
+                    >
+                      {o}
+                    </button>
+                  ))}
+
+                  {/* Age range */}
+                  {(ageMin !== dataAgeMin || ageMax !== dataAgeMax) && (
+                    <button className="chip" onClick={clearAge} title="Resetear Age">
+                      Age: {ageMin}–{ageMax}
+                    </button>
+                  )}
+
+                  {/* Price range */}
+                  {(priceMin !== dataPriceMin || priceMax !== dataPriceMax) && (
+                    <button
+                      className="chip"
+                      onClick={clearPrice}
+                      title="Resetear Price"
+                    >
+                      Price: {formatMoney(priceMin)}–{formatMoney(priceMax)}
+                    </button>
+                  )}
                 </div>
-                <button className="btn-clear" onClick={clearTypes}>
+
+                <button className="btn-clear" onClick={clearAll}>
                   Borrar todo
                 </button>
               </div>
@@ -129,7 +492,7 @@ const ArtifactView = () => {
                 ))}
                 {filtered.length === 0 && (
                   <Col xs={12}>
-                    <p className="text-center text-white-50 m-5">
+                    <p className="text-center text-gray-custom m-5">
                       No se encontraron artefactos con esos filtros.
                     </p>
                   </Col>
