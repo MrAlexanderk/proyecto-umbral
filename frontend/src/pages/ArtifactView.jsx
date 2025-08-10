@@ -1,15 +1,18 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 import "../styles/ArtifactsStyles.css";
 
-import ArtifactRow from "../components/ArtifactRow";
+import ArtifactCard from "../components/ArtifactCard";
+import PaginationBar from "../components/PaginationBar";
 import { useArtifacts } from "../context/ArtifactsContext";
 
 // ESTE COMPONENTE ESTÁ CREADO DE FORMA DUMMY PORQUE NO TENGO EL BACKEND TODAVÍA
 // APENAS LO TENGA CAMBIARÁ COMPLETAMENTE PARA UTILIZAR EL URL AL IGUAL QUE HACEN LOS BOTONES DE LAS CATEGORÍAS DEl HOME
 // PERO LA VERDAD CREO QUE ES MÁS FÁCIL PARA ESTE COMPONENTE EN PARTICULAR HACERLO EN CONJUNTO CON EL BACK END <3
+
+const PAGE_SIZE_OPTIONS = [6, 12, 24, 48];
 
 const ArtifactView = () => {
   const { artifacts, categories, getCategoryLabelById } = useArtifacts();
@@ -23,6 +26,14 @@ const ArtifactView = () => {
   const [openOrigin, setOpenOrigin] = useState(true);
   const [openAge, setOpenAge] = useState(true);
   const [openPrice, setOpenPrice] = useState(true);
+
+  // Paginación
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const mounted = useRef(false);
 
   const toggleType = (label) => {
     setSelectedTypes((prev) => {
@@ -40,23 +51,20 @@ const ArtifactView = () => {
     });
   };
 
-  const location = useLocation();
-
-  // Lee parámetros de la URL (type y query) y los aplica al estado
+  // Lee parámetros de la URL (type, query, page, size) y los aplica al estado
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+
     const typeParam = params.get("type");
     const queryParam = params.get("query");
+    const pageParam = parseInt(params.get("page") || "1", 10);
+    const sizeParam = parseInt(params.get("size") || "12", 10);
 
-    if (typeParam) {
-      setSelectedTypes(new Set([typeParam]));
-    } else {
-      setSelectedTypes((prev) => prev); // no tocar si no viene
-    }
+    if (typeParam) setSelectedTypes(new Set([typeParam]));
+    if (typeof queryParam === "string") setQuery(queryParam);
 
-    if (typeof queryParam === "string") {
-      setQuery(queryParam);
-    }
+    setPage(Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1);
+    setPageSize(PAGE_SIZE_OPTIONS.includes(sizeParam) ? sizeParam : 12);
   }, [location.search]);
 
   // Orígenes únicos derivados de los artefactos (ordenados alfabéticamente)
@@ -108,6 +116,11 @@ const ArtifactView = () => {
     clearOrigins();
     clearAge();
     clearPrice();
+    setPage(1);
+    const params = new URLSearchParams(location.search);
+    params.set("page", "1");
+    params.set("size", String(pageSize));
+    navigate({ pathname: location.pathname, search: `?${params.toString()}` }, { replace: true });
   };
 
   const clampNumber = (v, min, max) => {
@@ -125,26 +138,20 @@ const ArtifactView = () => {
     const maxPrice = Math.max(priceMin, priceMax);
 
     return artifacts.filter((a) => {
-      // Texto
       const nameOk =
         !q ||
         (a.name && a.name.toLowerCase().includes(q)) ||
         (a.history && a.history.toLowerCase().includes(q)) ||
         (a.origin && a.origin.toLowerCase().includes(q));
 
-      // Tipo
       const typeName = getCategoryLabelById(a.type_id);
       const typeOk = selectedTypes.size === 0 || selectedTypes.has(typeName);
 
-      // Origen
-      const originOk =
-        selectedOrigins.size === 0 || selectedOrigins.has(a.origin);
+      const originOk = selectedOrigins.size === 0 || selectedOrigins.has(a.origin);
 
-      // Edad
       const ageVal = a.age ?? 0;
       const ageOk = ageVal >= minAge && ageVal <= maxAge;
 
-      // Precio
       const priceVal = a.price ?? 0;
       const priceOk = priceVal >= minPrice && priceVal <= maxPrice;
 
@@ -162,12 +169,45 @@ const ArtifactView = () => {
     getCategoryLabelById,
   ]);
 
+  // Reset a página 1 cuando cambian filtros en cliente
+  useEffect(() => {
+    if (mounted.current) {
+      setPage(1);
+    } else {
+      mounted.current = true;
+    }
+  }, [query, selectedTypes, selectedOrigins, ageMin, ageMax, priceMin, priceMax]);
+
+  // Derivados de paginación
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = Math.min(total, startIdx + pageSize);
+  const pageItems = filtered.slice(startIdx, endIdx);
+
+  // Navegación y tamaño (sincronizan con URL)
+  const goToPage = (p) => {
+    const target = Math.max(1, Math.min(p, totalPages));
+    setPage(target);
+    const params = new URLSearchParams(location.search);
+    params.set("page", String(target));
+    params.set("size", String(pageSize));
+    navigate({ pathname: location.pathname, search: `?${params.toString()}` });
+  };
+
+  const changePageSize = (newSize) => {
+    const size = PAGE_SIZE_OPTIONS.includes(newSize) ? newSize : 12;
+    setPageSize(size);
+    setPage(1);
+    const params = new URLSearchParams(location.search);
+    params.set("page", "1");
+    params.set("size", String(size));
+    navigate({ pathname: location.pathname, search: `?${params.toString()}` });
+  };
+
   const formatMoney = (n) =>
-    new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(n);
+    new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
   const HeaderToggle = ({ open, onClick, title, controlsId }) => (
     <button
@@ -233,9 +273,7 @@ const ArtifactView = () => {
                       title="Type"
                       controlsId="filter-type"
                     />
-                    <button className="btn-clear" onClick={clearTypes}>
-                      Limpiar
-                    </button>
+                    <button className="btn-clear" onClick={clearTypes}>Clear</button>
                   </h4>
                   <div id="filter-type" hidden={!openType}>
                     <ul className="filter-list">
@@ -249,9 +287,7 @@ const ArtifactView = () => {
                                 checked={selectedTypes.has(c.label)}
                                 onChange={() => toggleType(c.label)}
                               />
-                              <span className="icon">
-                                <Icon />
-                              </span>
+                              <span className="icon"><Icon /></span>
                               <span>{c.label}</span>
                             </label>
                           </li>
@@ -270,9 +306,7 @@ const ArtifactView = () => {
                       title="Origin"
                       controlsId="filter-origin"
                     />
-                    <button className="btn-clear" onClick={clearOrigins}>
-                      Limpiar
-                    </button>
+                    <button className="btn-clear" onClick={clearOrigins}>Clear</button>
                   </h4>
                   <div id="filter-origin" hidden={!openOrigin}>
                     <ul className="filter-list">
@@ -289,9 +323,7 @@ const ArtifactView = () => {
                         </li>
                       ))}
                       {allOrigins.length === 0 && (
-                        <li className="text-gray-custom small">
-                          No hay orígenes disponibles
-                        </li>
+                        <li className="text-gray-custom small">No hay orígenes disponibles</li>
                       )}
                     </ul>
                   </div>
@@ -306,9 +338,7 @@ const ArtifactView = () => {
                       title="Age (years)"
                       controlsId="filter-age"
                     />
-                    <button className="btn-clear" onClick={clearAge}>
-                      Reset
-                    </button>
+                    <button className="btn-clear" onClick={clearAge}>Reset</button>
                   </h4>
                   <div id="filter-age" hidden={!openAge}>
                     <div className="range-row text-gray-custom">
@@ -320,11 +350,7 @@ const ArtifactView = () => {
                           min={dataAgeMin}
                           max={dataAgeMax}
                           value={ageMin}
-                          onChange={(e) =>
-                            setAgeMin(
-                              clampNumber(e.target.value, dataAgeMin, dataAgeMax)
-                            )
-                          }
+                          onChange={(e) => setAgeMin(clampNumber(e.target.value, dataAgeMin, dataAgeMax))}
                         />
                       </div>
                       <div className="range-sep">—</div>
@@ -336,17 +362,11 @@ const ArtifactView = () => {
                           min={dataAgeMin}
                           max={dataAgeMax}
                           value={ageMax}
-                          onChange={(e) =>
-                            setAgeMax(
-                              clampNumber(e.target.value, dataAgeMin, dataAgeMax)
-                            )
-                          }
+                          onChange={(e) => setAgeMax(clampNumber(e.target.value, dataAgeMin, dataAgeMax))}
                         />
                       </div>
                     </div>
-                    <div className="tiny-hint text-gray-custom">
-                      Rango de datos: {dataAgeMin}–{dataAgeMax}
-                    </div>
+                    <div className="tiny-hint text-gray-custom">Rango de datos: {dataAgeMin}–{dataAgeMax}</div>
                   </div>
                 </div>
 
@@ -359,9 +379,7 @@ const ArtifactView = () => {
                       title="Price"
                       controlsId="filter-price"
                     />
-                    <button className="btn-clear" onClick={clearPrice}>
-                      Reset
-                    </button>
+                    <button className="btn-clear" onClick={clearPrice}>Reset</button>
                   </h4>
                   <div id="filter-price" hidden={!openPrice}>
                     <div className="range-row text-gray-custom">
@@ -374,15 +392,7 @@ const ArtifactView = () => {
                           max={dataPriceMax}
                           step="100"
                           value={priceMin}
-                          onChange={(e) =>
-                            setPriceMin(
-                              clampNumber(
-                                e.target.value,
-                                dataPriceMin,
-                                dataPriceMax
-                              )
-                            )
-                          }
+                          onChange={(e) => setPriceMin(clampNumber(e.target.value, dataPriceMin, dataPriceMax))}
                         />
                       </div>
                       <div className="range-sep">—</div>
@@ -395,21 +405,12 @@ const ArtifactView = () => {
                           max={dataPriceMax}
                           step="100"
                           value={priceMax}
-                          onChange={(e) =>
-                            setPriceMax(
-                              clampNumber(
-                                e.target.value,
-                                dataPriceMin,
-                                dataPriceMax
-                              )
-                            )
-                          }
+                          onChange={(e) => setPriceMax(clampNumber(e.target.value, dataPriceMin, dataPriceMax))}
                         />
                       </div>
                     </div>
                     <div className="tiny-hint text-gray-custom">
-                      Rango de datos: {formatMoney(dataPriceMin)}–
-                      {formatMoney(dataPriceMax)}
+                      Rango de datos: {formatMoney(dataPriceMin)}–{formatMoney(dataPriceMax)}
                     </div>
                   </div>
                 </div>
@@ -419,85 +420,79 @@ const ArtifactView = () => {
             {/* Resultados */}
             <Col lg={9}>
               <div className="results-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <div className="text-gray-custom small">
-                  Resultados encontrados para:
-                </div>
+                <div className="text-gray-custom small">Artifacts found for:</div>
 
-                {/* Chips de filtros activos */}
                 <div className="chips d-flex flex-wrap gap-2">
-                  {/* Query */}
                   {query.trim() !== "" && (
-                    <button
-                      className="chip"
-                      onClick={clearQuery}
-                      title="Quitar búsqueda"
-                    >
+                    <button className="chip" onClick={clearQuery} title="Quitar búsqueda">
                       “{query.trim()}”
                     </button>
                   )}
-
-                  {/* Types */}
                   {[...selectedTypes].map((t) => (
-                    <button
-                      key={`type-${t}`}
-                      className="chip"
-                      onClick={() => toggleType(t)}
-                      title="Quitar filtro"
-                    >
+                    <button key={`type-${t}`} className="chip" onClick={() => toggleType(t)} title="Quitar filtro">
                       {t}
                     </button>
                   ))}
-
-                  {/* Origins */}
                   {[...selectedOrigins].map((o) => (
-                    <button
-                      key={`origin-${o}`}
-                      className="chip"
-                      onClick={() => toggleOrigin(o)}
-                      title="Quitar filtro"
-                    >
+                    <button key={`origin-${o}`} className="chip" onClick={() => toggleOrigin(o)} title="Quitar filtro">
                       {o}
                     </button>
                   ))}
-
-                  {/* Age range */}
                   {(ageMin !== dataAgeMin || ageMax !== dataAgeMax) && (
                     <button className="chip" onClick={clearAge} title="Resetear Age">
                       Age: {ageMin}–{ageMax}
                     </button>
                   )}
-
-                  {/* Price range */}
                   {(priceMin !== dataPriceMin || priceMax !== dataPriceMax) && (
-                    <button
-                      className="chip"
-                      onClick={clearPrice}
-                      title="Resetear Price"
-                    >
+                    <button className="chip" onClick={clearPrice} title="Resetear Price">
                       Price: {formatMoney(priceMin)}–{formatMoney(priceMax)}
                     </button>
                   )}
                 </div>
 
-                <button className="btn-clear" onClick={clearAll}>
-                  Borrar todo
-                </button>
+                <button className="btn-clear" onClick={clearAll}>Clear all</button>
               </div>
 
+              {/* Paginado superior */}
+              <PaginationBar
+                total={total}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                pageSizeOptions={PAGE_SIZE_OPTIONS}
+                onPageChange={goToPage}
+                onPageSizeChange={changePageSize}
+              />
+
               <Row className="g-3 mt-2">
-                {filtered.map((artifact) => (
+                {pageItems.map((artifact) => (
                   <Col md={6} xl={4} key={artifact.id}>
-                    <ArtifactRow artifact={artifact} />
+                    <ArtifactCard artifact={artifact} />
                   </Col>
                 ))}
-                {filtered.length === 0 && (
+                {pageItems.length === 0 && (
                   <Col xs={12}>
                     <p className="text-center text-gray-custom m-5">
-                      No se encontraron artefactos con esos filtros.
+                      Artifacts not found.
                     </p>
                   </Col>
                 )}
               </Row>
+
+              {/* Paginado inferior */}
+              <PaginationBar
+                total={total}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                pageSizeOptions={PAGE_SIZE_OPTIONS}
+                onPageChange={goToPage}
+                onPageSizeChange={changePageSize}
+              />
             </Col>
           </Row>
         </Container>

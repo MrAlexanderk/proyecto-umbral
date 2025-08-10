@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-//import '../styles/ArtifactRow.css';
 import "../styles/ArtifactVisual.css";
 import "../styles/styles.css";
 import { UserContext } from "../context/UserContext";
