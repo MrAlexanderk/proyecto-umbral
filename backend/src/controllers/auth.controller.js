@@ -2,7 +2,7 @@ import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { authModel } from "../models/auth.model.js";
-import { isValidEmail } from "../utils/validators/email.validate.js";
+import { isValidEmail } from "../../utils/validators/email.validate.js";
 
 const login = async (req, res) => {
   try {
