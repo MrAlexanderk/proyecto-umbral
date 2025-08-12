@@ -4,11 +4,23 @@ import { CATEGORIES } from "./ArtifactsContext";
 
 export const UserContext = createContext();
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const api = axios.create({ baseURL: API_URL });
+console.log("API_URL =", API_URL); // Debe mostrar http://localhost:5000/api
+
 export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (token) {
+      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    } else {
+      delete api.defaults.headers.common.Authorization;
+    }
+  }, [token]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -22,54 +34,34 @@ export const UserProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      // Fake login
-      const fakeToken = "fake-jwt-token-1234567890";
-      setToken(fakeToken);
+      const { data } = await api.post("/auth/login", credentials);
+      const { token: jwt, email: serverEmail } = data;
 
-      /*
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        credentials
-      );
-      const { token, email } = response.data;
-      setToken(token);
-      */
-      setEmail(email);
+      setToken(jwt);
+      setEmail(serverEmail);
+      localStorage.setItem("token", jwt);
+      localStorage.setItem("email", serverEmail);
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("email", email);
-
+      return true;
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login failed:", error?.response?.data || error.message);
       throw error;
     }
   };
 
   const register = async (userData) => {
     try {
-      // Fake sign up por ahora
-      const fakeToken = "fake-jwt-token-1234567890";
-      setToken(fakeToken);
-      setEmail(userData.email);
+      const { data } = await api.post("/auth/register", userData);
+      const { token: jwt, email: serverEmail } = data;
 
-      localStorage.setItem("token", fakeToken);
-      localStorage.setItem("email", userData.email);
+      setToken(jwt);
+      setEmail(serverEmail);
+      localStorage.setItem("token", jwt);
+      localStorage.setItem("email", serverEmail);
 
-      /*
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        userData
-      );
-      const { token } = response.data;
-
-      setToken(token);
-      setEmail(userData.email);
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("email", userData.email);
-      */
+      return true;
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error("Registration failed:", error?.response?.data || error.message);
       throw error;
     }
   };
@@ -77,6 +69,7 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setEmail("");
+    setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("email");
   };
@@ -84,33 +77,14 @@ export const UserProvider = ({ children }) => {
   const getProfile = useCallback(async () => {
     try {
       if (user) return user;
-      else {
-        // Fake data
-        const fakeUser = {
-          username: "shadowhunter",
-          email: "shadowhunter@umbral.com",
-          passwordLength: 8,
-          id: 1
-        };
-
-        setUser(fakeUser);
-        return fakeUser;
-      }
-
-      /*
-      const response = await axios.get("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUser(response.data);
-      return response.data;
-      */
+      const { data } = await api.get("/auth/me");
+      setUser(data);
+      return data;
     } catch (error) {
-      console.error("Failed to fetch profile:", error);
+      console.error("Failed to fetch profile:", error?.response?.data || error.message);
       return null;
     }
-  }, [user, token]);
+  }, [user]);
 
   const getArtifactsFromUser = async () => {
     try {
@@ -191,39 +165,17 @@ export const UserProvider = ({ children }) => {
 
   const updateProfile = async (updatedData) => {
     try {
-      /*
-      const response = await axios.put(
-        "/api/auth/me",
-        updatedData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-      */
 
-      console.log("Updating profile with data:", updatedData);
+      const { data } = await api.put("/auth/me", updatedData);
 
-      if (updatedData.email) {
-        setEmail(updatedData.email);
-        localStorage.setItem("email", updatedData.email);
+      if (data?.email) {
+        setEmail(data.email);
+        localStorage.setItem("email", data.email);
       }
-
-      setUser((prevUser) => ({
-        ...prevUser,
-        ...updatedData,
-        passwordLength: updatedData.password ? updatedData.password.length : prevUser?.passwordLength || 8,
-      }));
-
-      return {
-        ...user,
-        ...updatedData,
-        passwordLength: updatedData.password ? updatedData.password.length : user?.passwordLength || 8,
-      };
+      setUser((prev) => ({ ...(prev || {}), ...data }));
+      return data;
     } catch (error) {
-      console.error("Update profile failed:", error);
+      console.error("Update profile failed:", error?.response?.data || error.message);
       throw error;
     }
   };
