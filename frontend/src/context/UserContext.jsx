@@ -6,7 +6,11 @@ export const UserContext = createContext();
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const api = axios.create({ baseURL: API_URL });
-console.log("API_URL =", API_URL); // Debe mostrar http://localhost:5000/api
+
+const setAuthHeader = (jwt) => {
+  if (jwt) api.defaults.headers.common.Authorization = `Bearer ${jwt}`;
+  else delete api.defaults.headers.common.Authorization;
+};
 
 export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
@@ -37,6 +41,8 @@ export const UserProvider = ({ children }) => {
       const { data } = await api.post("/auth/login", credentials);
       const { token: jwt, email: serverEmail } = data;
 
+      setAuthHeader(jwt);
+
       setToken(jwt);
       setEmail(serverEmail);
       localStorage.setItem("token", jwt);
@@ -49,10 +55,13 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+
   const register = async (userData) => {
     try {
       const { data } = await api.post("/auth/register", userData);
       const { token: jwt, email: serverEmail } = data;
+
+      setAuthHeader(jwt);
 
       setToken(jwt);
       setEmail(serverEmail);
@@ -67,6 +76,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
+    setAuthHeader(null);
     setToken(null);
     setEmail("");
     setUser(null);
@@ -76,19 +86,23 @@ export const UserProvider = ({ children }) => {
 
   const getProfile = useCallback(async () => {
     try {
+      if(!token) return null;
       if (user) return user;
       const { data } = await api.get("/auth/me");
       setUser(data);
       return data;
     } catch (error) {
+      if (error?.response?.status === 401) {
+        logout();
+      }
       console.error("Failed to fetch profile:", error?.response?.data || error.message);
       return null;
     }
-  }, [user]);
+  }, [user, token]);
 
   const getArtifactsFromUser = async () => {
     try {
-      // Datos de prueba (asignados al user)
+      // Datos de prueba (asignados al user por ahora)
       const testData = [
         {
           id: 1,
