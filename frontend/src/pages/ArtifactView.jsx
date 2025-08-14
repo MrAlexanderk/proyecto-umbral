@@ -8,32 +8,41 @@ import ArtifactCard from "../components/ArtifactCard";
 import PaginationBar from "../components/PaginationBar";
 import { useArtifacts } from "../context/ArtifactsContext";
 
-// ESTE COMPONENTE ESTÁ CREADO DE FORMA DUMMY PORQUE NO TENGO EL BACKEND TODAVÍA
-// APENAS LO TENGA CAMBIARÁ COMPLETAMENTE PARA UTILIZAR EL URL AL IGUAL QUE HACEN LOS BOTONES DE LAS CATEGORÍAS DEl HOME
-// PERO LA VERDAD CREO QUE ES MÁS FÁCIL PARA ESTE COMPONENTE EN PARTICULAR HACERLO EN CONJUNTO CON EL BACK END <3
-
 const PAGE_SIZE_OPTIONS = [6, 12, 24, 48];
 
 const ArtifactView = () => {
-  const { artifacts, categories, getCategoryLabelById } = useArtifacts();
+  const { artifacts, categories, getCategoryLabelById, getAllArtifacts } = useArtifacts();
 
   const [query, setQuery] = useState("");
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedOrigins, setSelectedOrigins] = useState(new Set());
 
-  // Estados de colapso por sección
   const [openType, setOpenType] = useState(true);
   const [openOrigin, setOpenOrigin] = useState(true);
   const [openAge, setOpenAge] = useState(true);
   const [openPrice, setOpenPrice] = useState(true);
 
-  // Paginación
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
 
   const navigate = useNavigate();
   const location = useLocation();
   const mounted = useRef(false);
+
+  const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setFetching(true);
+        await getAllArtifacts();
+      } finally {
+        if (alive) setFetching(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, [getAllArtifacts]);
 
   const toggleType = (label) => {
     setSelectedTypes((prev) => {
@@ -467,6 +476,7 @@ const ArtifactView = () => {
               />
 
               <Row className="g-3 mt-2">
+                
                 {pageItems.map((artifact) => (
                   <Col md={6} xl={4} key={artifact.id}>
                     <ArtifactCard artifact={artifact} />
