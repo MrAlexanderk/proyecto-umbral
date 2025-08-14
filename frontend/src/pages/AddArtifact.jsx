@@ -13,8 +13,8 @@ import ArtifactVisual from '../components/ArtifactVisual';
 const MySwal = withReactContent(Swal);
 
 const AddArtifact = () => {
-  const { addArtifact, getProfile } = useContext(UserContext);
-  const { categories } = useArtifacts();
+  const { getProfile } = useContext(UserContext);
+  const { categories, addArtifact } = useArtifacts();
   const navigate = useNavigate();
 
   const [artifactName, setartifactName] = useState('');

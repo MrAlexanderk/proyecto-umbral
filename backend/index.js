@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 import authRoutes from './src/routes/auth.routes.js';
+import artifactRoutes from './src/routes/artifact.routes.js';
 
 import { notFound, errorHandler } from './src/middlewares/error.middleware.js';
 
@@ -17,6 +18,7 @@ app.get('/api/health', (req, res) => res.json({ ok: true, service: 'embrujados-a
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
+app.use('/api/artifacts', artifactRoutes);
 
 // 404 + handler de errores
 app.use(notFound);

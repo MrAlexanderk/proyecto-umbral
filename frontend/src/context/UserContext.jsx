@@ -55,7 +55,6 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-
   const register = async (userData) => {
     try {
       const { data } = await api.post("/auth/register", userData);
@@ -102,78 +101,13 @@ export const UserProvider = ({ children }) => {
 
   const getArtifactsFromUser = async () => {
     try {
-      // Datos de prueba (asignados al user por ahora)
-      const testData = [
-        {
-          id: 1,
-          user_id: 101,
-          status_id: 1,
-          type_id: 3,
-          name: "Amuleto de Sombras",
-          description: "Un amuleto antiguo que absorbe la luz.",
-          history: "Se dice que perteneció a un guardián de secretos oscuros.",
-          price: 2500,
-          age: "476",
-          origin: "España",
-          created_at: "2024-12-01T10:00:00Z",
-          image: "https://images.unsplash.com/photo-1602592867152-ba321a437ff0?q=80&w=687&auto=format&fit=crop"
-        },
-        {
-          id: 2,
-          user_id: 101,
-          status_id: 2,
-          type_id: 2,
-          name: "Espada de Fuego",
-          description: "Una espada que siempre está caliente al tacto.",
-          history: "Fue forjada en un volcán activo por un herrero legendario.",
-          price: 4800,
-          age: "23",
-          origin: "Japón",
-          created_at: "2025-01-15T14:30:00Z",
-          image: "https://images.unsplash.com/photo-1438012940875-4bf705025a8a?q=80&w=1170&auto=format&fit=crop"
-        }
-      ];
-
-      return testData;
-
-      /*
-      const response = await axios.get("/artifacts/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-      */
+      // Evita llamar si no hay token
+      if (!token) return [];
+      const { data } = await api.get("/artifacts/user");
+      return data; // array de artefactos
     } catch (error) {
-      console.error("Failed to fetch artifacts:", error);
+      console.error("Failed to fetch artifacts:", error?.response?.data || error.message);
       return [];
-    }
-  };
-
-  const addArtifact = async (artifactData) => {
-    try {
-      console.log("Simulación: enviando artifact al backend:", artifactData);
-      return {
-        id: Math.floor(Math.random() * 10000),
-        ...artifactData,
-        created_at: new Date().toISOString(),
-      };
-
-      /*
-      const response = await axios.post(
-        "http://localhost:5000/api/artifacts",
-        artifactData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-      */
-    } catch (error) {
-      console.error("Failed to add artifact:", error);
-      throw error;
     }
   };
 
@@ -215,7 +149,6 @@ export const UserProvider = ({ children }) => {
         loading,
         updateProfile,
         getArtifactsFromUser,
-        addArtifact,
         getTypeNameById
       }}
     >
