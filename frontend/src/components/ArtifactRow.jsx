@@ -1,28 +1,73 @@
-import '../styles/ArtifactRow.css';
-import { useArtifacts } from '../context/ArtifactsContext';
+import "../styles/ArtifactRow.css";
+import { useArtifacts } from "../context/ArtifactsContext";
+import { useMemo } from "react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-const ArtifactRow = ({ artifact }) => {
-  const { getCategoryLabelById, getCategoryIconById } = useArtifacts();
+const MySwal = withReactContent(Swal);
 
-  const categoryLabel = getCategoryLabelById(artifact.type_id);
-  const CategoryIcon = getCategoryIconById(artifact.type_id);
+const ArtifactRow = ({ artifact, onDeleted }) => {
+  const { getCategoryLabelById, getCategoryIconById, removeArtifact } = useArtifacts();
+
+  const categoryLabel = useMemo(() => getCategoryLabelById(artifact.type_id), [artifact.type_id, getCategoryLabelById]);
+  const CategoryIcon = useMemo(() => getCategoryIconById(artifact.type_id), [artifact.type_id, getCategoryIconById]);
+
+  const handleDelete = async () => {
+    MySwal.fire({
+      title: "Banish Artifact?",
+      text: `“${artifact.name}” will be permanently removed.`,
+      icon: "warning",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      showLoaderOnConfirm: true,
+      customClass: {
+        popup: "umbral-popup",
+        title: "umbral-title",
+        content: "umbral-text",
+        confirmButton: "umbral-confirm",
+        cancelButton: "umbral-cancel",
+      },
+      allowOutsideClick: () => !MySwal.isLoading(),
+      preConfirm: async () => {
+        try {
+          await removeArtifact(artifact.id);
+        } catch (e) {
+          const msg = e?.response?.data?.error || "Failed to delete artifact.";
+          MySwal.showValidationMessage(msg);
+          throw new Error(msg);
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        MySwal.fire({
+          title: "Artifact banished",
+          text: `"${artifact.name}" has been removed.`,
+          icon: "success",
+          customClass: {
+            popup: "umbral-popup",
+            title: "umbral-title",
+            content: "umbral-text",
+            confirmButton: "umbral-confirm",
+          },
+        });
+        if (typeof onDeleted === "function") onDeleted(artifact.id);
+      }
+    });
+  };
 
   return (
     <div className="artifact-card">
-      <img
-        src={artifact.image}
-        alt={artifact.name}
-        className="artifact-image"
-      />
+      <img src={artifact.image} alt={artifact.name} className="artifact-image" />
 
       <div className="content">
         <div className="header text-spectral">
           <h2 className="text-md">{artifact.name}</h2>
           <p className="status">ACTIVE</p>
           <div>
-            {/* Por temas de tiempo, está pendiente la implementación de las funcionalidades de editar y borrar. */}
-            <button className="editBtn">✎</button>
-            <button className="closeBtn">✖</button>
+            <button className="editBtn" title="Editar">✎</button>
+            <button className="closeBtn" title="Eliminar" onClick={handleDelete}>✖</button>
           </div>
         </div>
 

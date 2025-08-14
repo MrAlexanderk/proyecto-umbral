@@ -54,6 +54,12 @@ export async function createArtifact(userId, {
   return rows[0];
 }
 
+export async function deleteArtifactById(id, userId) {
+  const sql = `DELETE FROM artifacts WHERE id = $1 AND user_id = $2 RETURNING id;`;
+  const { rows } = await query(sql, [id, userId]);
+  return rows[0];
+}
+
 export async function existsType(id) {
   const { rows } = await query(`SELECT 1 FROM types WHERE id=$1`, [id]);
   return !!rows[0];

@@ -56,7 +56,11 @@ const ArtifactList = () => {
   return (
     <div>
       {artifacts.map((artifact) => (
-        <ArtifactRow key={artifact.id} artifact={artifact} />
+        <ArtifactRow 
+        key={artifact.id} 
+        artifact={artifact} 
+        onDeleted={(id) => setArtifacts((prev) => prev.filter((a) => a.id !== id))}
+        />
       ))}
     </div>
   );

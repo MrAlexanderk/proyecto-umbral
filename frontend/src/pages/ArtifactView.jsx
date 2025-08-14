@@ -60,7 +60,6 @@ const ArtifactView = () => {
     });
   };
 
-  // Lee parámetros de la URL (type, query, page, size) y los aplica al estado
   useEffect(() => {
     const params = new URLSearchParams(location.search);
 
@@ -76,13 +75,11 @@ const ArtifactView = () => {
     setPageSize(PAGE_SIZE_OPTIONS.includes(sizeParam) ? sizeParam : 12);
   }, [location.search]);
 
-  // Orígenes únicos derivados de los artefactos (ordenados alfabéticamente)
   const allOrigins = useMemo(() => {
     const set = new Set(artifacts.map((a) => a.origin).filter(Boolean));
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [artifacts]);
 
-  // Rango de edad/price detectado desde datos
   const { dataAgeMin, dataAgeMax, dataPriceMin, dataPriceMax } = useMemo(() => {
     const ages = artifacts.map((a) => a.age ?? 0);
     const prices = artifacts.map((a) => a.price ?? 0);
@@ -94,13 +91,11 @@ const ArtifactView = () => {
     };
   }, [artifacts]);
 
-  // Valores controlados de los inputs de rango
   const [ageMin, setAgeMin] = useState(0);
   const [ageMax, setAgeMax] = useState(0);
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(0);
 
-  // Re-Inicializa cuando llegan/ cambian datos
   useEffect(() => {
     setAgeMin(dataAgeMin);
     setAgeMax(dataAgeMax);
@@ -137,7 +132,6 @@ const ArtifactView = () => {
     return Math.min(Math.max(n, min), max);
   };
 
-  // --- FILTRADO ---
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
 
@@ -178,7 +172,6 @@ const ArtifactView = () => {
     getCategoryLabelById,
   ]);
 
-  // Reset a página 1 cuando cambian filtros en cliente
   useEffect(() => {
     if (mounted.current) {
       setPage(1);
@@ -187,7 +180,6 @@ const ArtifactView = () => {
     }
   }, [query, selectedTypes, selectedOrigins, ageMin, ageMax, priceMin, priceMax]);
 
-  // Derivados de paginación
   const total = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -195,7 +187,6 @@ const ArtifactView = () => {
   const endIdx = Math.min(total, startIdx + pageSize);
   const pageItems = filtered.slice(startIdx, endIdx);
 
-  // Navegación y tamaño (sincronizan con URL)
   const goToPage = (p) => {
     const target = Math.max(1, Math.min(p, totalPages));
     setPage(target);

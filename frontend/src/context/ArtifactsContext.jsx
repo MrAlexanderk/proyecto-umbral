@@ -69,6 +69,23 @@ export const ArtifactsProvider = ({ children }) => {
     }
   }, []);
 
+  const removeArtifact = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+
+    await api.delete(`/artifacts/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setArtifacts((prev) => prev.filter((a) => a.id !== id));
+    return true;
+  } catch (error) {
+    console.error("Failed to remove artifact:", error?.response?.data || error.message);
+    throw error;
+  }
+};
+
   const addArtifact = async (artifactData) => {
     try {
       const token = localStorage.getItem("token");
@@ -99,6 +116,7 @@ export const ArtifactsProvider = ({ children }) => {
         getCategoryById,
         getCategoryLabelById,
         getCategoryIconById,
+        removeArtifact,
       }}
     >
       {children}

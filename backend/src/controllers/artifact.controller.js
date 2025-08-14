@@ -4,6 +4,7 @@ import {
   createArtifact,
   existsType,
   existsStatus,
+  deleteArtifactById,
 } from "../models/artifact.model.js";
 
 export async function listArtifacts(req, res, next) {
@@ -23,6 +24,25 @@ export async function getMyArtifacts(req, res, next) {
     const data = await findArtifactsByUserId(userId, { limit, offset });
     res.json(data);
   } catch (err) { next(err); }
+}
+
+export async function deleteMyArtifact(req, res, next) {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id <= 0) {
+      return res.status(400).json({ error: "Invalid id" });
+    }
+
+    const deleted = await deleteArtifactById(id, userId);
+    if (!deleted) return res.status(404).json({ error: "Artifact not found" });
+
+    return res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function createMyArtifact(req, res, next) {
