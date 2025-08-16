@@ -65,3 +65,5 @@ PORT=5000
 DATABASE_URL=postgresql://el_umbral_db_user:wZwzk9I571Qaf9SDHGjEA72cPuWLsNu5@dpg-d2d8ibqdbo4c73b6df2g-a.oregon-postgres.render.com:5432/el_umbral_db?sslmode=require
 JWT_EXPIRES=7d
 CORS_ORIGIN=http://localhost:5173
+```
+* Las credenciales incluidas en este documento .env corresponden a una base de datos temporal de prueba, con información dummy, por lo cual su uso no constituye un riesgo directamente y estará disponible hasta el 10 de septiembre.
