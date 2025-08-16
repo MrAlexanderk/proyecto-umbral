@@ -1,4 +1,3 @@
-/** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
@@ -6,4 +5,3 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   transform: {}
 };
-

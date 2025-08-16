@@ -5,9 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-
-    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --detectOpenHandles",
-    "test:watch": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+    "test": "cross-env NODE_ENV=test PG_SEARCH_PATH=test_env node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --detectOpenHandles",
+    "test:watch": "cross-env NODE_ENV=test PG_SEARCH_PATH=test_env node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "keywords": [],
   "author": "",
