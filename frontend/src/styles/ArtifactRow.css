@@ -12,39 +12,39 @@
 }
 
 .artifact-image {
-    height: 160px;
-    width: 120px;
-    object-fit: cover;
-    border-radius: 8px;
-    flex-shrink: 0;
-    display: block;
+  height: 160px;
+  width: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: block;
 }
 
 p{
-    margin: 0 !important;
-    color: var(--color-gray);
+  margin: 0 !important;
+  color: var(--color-gray);
 }
 
 .content {
-    flex: 1;
-    display: flex;
-    gap: 1rem;
-    flex-direction: column;
-    justify-content: flex-start;
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0;
-    border-bottom: 1px solid #555;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  border-bottom: 1px solid #555;
 }
 
 .status {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #567500 !important;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #567500 !important;
 }
 
 .actions button {
@@ -124,7 +124,7 @@ p{
 
 .artifact-card .edit-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 1fr; /* izq, medio, der */
+  grid-template-columns: 1.2fr 0.8fr 1fr;
   gap: 16px 20px;
   align-items: start;
   padding-top: 8px;
@@ -145,7 +145,7 @@ p{
 .artifact-card .label {
   font-size: 0.8rem;
   letter-spacing: .05em;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .artifact-card .edit-grid .input-square,
@@ -154,6 +154,10 @@ p{
   width: 100%;
   transform: none !important;
   writing-mode: horizontal-tb !important;
+  border: 0.02rem solid var(--color-gray);
+  border-radius: 0.25rem;
+  resize: none;
+  padding: 0.2rem 0.4rem;
 }
 
 .artifact-card .edit-grid textarea {

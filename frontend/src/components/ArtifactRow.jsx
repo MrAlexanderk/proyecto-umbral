@@ -196,7 +196,7 @@ const ArtifactRow = ({ artifact, onDeleted }) => {
             <h2 className="text-md">{live.name}</h2>
           )}
 
-          <p className="status">
+          <p className="status m-1">
             {(editMode ? statusId : live.status_id) === 1
               ? "ACTIVE"
               : (editMode ? statusId : live.status_id) === 2
@@ -204,17 +204,16 @@ const ArtifactRow = ({ artifact, onDeleted }) => {
               : "SOLD"}
           </p>
 
-          <div>
+          <div className="d-flex">
             {editMode ? (
               <>
                 <button className="editBtn" title="Guardar" onClick={handleSave}>✔</button>
-                <button className="editBtn" title="Cancelar" onClick={cancelEdit}>⟲</button>
-                <button className="closeBtn" title="Eliminar" onClick={handleDelete}>✖</button>
+                <button className="editBtn" title="Cancelar" onClick={cancelEdit}>✖</button>
               </>
             ) : (
               <>
                 <button className="editBtn" title="Editar" onClick={() => setEditMode(true)}>✎</button>
-                <button className="closeBtn" title="Eliminar" onClick={handleDelete}>✖</button>
+                <button className="closeBtn" title="Eliminar" onClick={handleDelete}>🗑️</button>
               </>
             )}
           </div>
