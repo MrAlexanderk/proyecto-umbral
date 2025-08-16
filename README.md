@@ -60,8 +60,8 @@ Un proyecto fullstack con **React + Vite (frontend)** y **Node.js + Express + Po
 
 ### Backend
 ```env
-JWT_SECRET=
-PORT=
-DATABASE_URL=
-JWT_EXPIRES=
-CORS_ORIGIN=
+JWT_SECRET=increiblementeSecreto
+PORT=5000
+DATABASE_URL=postgresql://el_umbral_db_user:wZwzk9I571Qaf9SDHGjEA72cPuWLsNu5@dpg-d2d8ibqdbo4c73b6df2g-a.oregon-postgres.render.com:5432/el_umbral_db?sslmode=require
+JWT_EXPIRES=7d
+CORS_ORIGIN=http://localhost:5173
