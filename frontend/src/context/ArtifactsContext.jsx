@@ -103,6 +103,25 @@ export const ArtifactsProvider = ({ children }) => {
     }
   };
 
+  const updateArtifact = async (id, patch) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Not authenticated");
+
+      const { data } = await api.put(`/artifacts/${id}`, patch, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setArtifacts((prev) => prev.map((a) => (a.id === id ? data : a)));
+      
+      return data;
+    } catch (error) {
+      console.error("Failed to update artifact:", error?.response?.data || error.message);
+      throw error;
+    }
+  };
+
+
   return (
     <ArtifactsContext.Provider
       value={{
@@ -117,6 +136,7 @@ export const ArtifactsProvider = ({ children }) => {
         getCategoryLabelById,
         getCategoryIconById,
         removeArtifact,
+        updateArtifact,
       }}
     >
       {children}

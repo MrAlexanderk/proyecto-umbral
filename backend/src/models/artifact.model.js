@@ -60,6 +60,34 @@ export async function deleteArtifactById(id, userId) {
   return rows[0];
 }
 
+export async function updateArtifactById(id, userId, fields) {
+  const allowed = ["name", "type_id", "status_id", "description", "history", "price", "age", "origin", "image"];
+  const set = [];
+  const values = [];
+  let i = 1;
+
+  for (const key of allowed) {
+    if (fields[key] !== undefined) {
+      set.push(`${key} = $${i++}`);
+      values.push(fields[key]);
+    }
+  }
+
+  if (!set.length) return null; // nada que actualizar
+
+  values.push(id);
+  values.push(userId);
+
+  const sql = `
+    UPDATE artifacts
+    SET ${set.join(", ")}
+    WHERE id = $${i++} AND user_id = $${i}
+    RETURNING id, user_id, status_id, type_id, name, description, history, price, age, origin, image, created_at
+  `;
+  const { rows } = await query(sql, values);
+  return rows[0] || null;
+}
+
 export async function existsType(id) {
   const { rows } = await query(`SELECT 1 FROM types WHERE id=$1`, [id]);
   return !!rows[0];

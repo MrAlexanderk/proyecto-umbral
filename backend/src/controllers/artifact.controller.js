@@ -5,6 +5,7 @@ import {
   existsType,
   existsStatus,
   deleteArtifactById,
+  updateArtifactById,
 } from "../models/artifact.model.js";
 
 export async function listArtifacts(req, res, next) {
@@ -62,7 +63,6 @@ export async function createMyArtifact(req, res, next) {
       status_id = 1,
     } = req.body || {};
 
-    // Validaciones básicas
     if (!name?.trim()) return res.status(400).json({ error: "name is required" });
     const typeIdNum = Number(type_id);
     const priceNum  = Number(price);
@@ -73,7 +73,6 @@ export async function createMyArtifact(req, res, next) {
     if (!Number.isFinite(priceNum) || priceNum < 0) return res.status(400).json({ error: "price must be a positive number" });
     if (ageNum != null && (!Number.isFinite(ageNum) || ageNum < 0)) return res.status(400).json({ error: "age must be a positive number" });
 
-    // Validar FKs (evita 500 por violación de FK)
     if (!(await existsType(typeIdNum)))   return res.status(400).json({ error: "Invalid type_id" });
     if (!(await existsStatus(statusIdNum))) return res.status(400).json({ error: "Invalid status_id" });
 
@@ -90,6 +89,81 @@ export async function createMyArtifact(req, res, next) {
     });
 
     res.status(201).json(created);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateMyArtifact(req, res, next) {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id <= 0) {
+      return res.status(400).json({ error: "Invalid id" });
+    }
+
+    const {
+      name,
+      type_id,
+      status_id,
+      description,
+      history,
+      price,
+      age,
+      origin,
+      image,
+    } = req.body || {};
+
+    const fields = {};
+
+    if (name !== undefined) {
+      if (!name.trim()) return res.status(400).json({ error: "name cannot be empty" });
+      fields.name = name.trim();
+    }
+
+    if (type_id !== undefined) {
+      const typeIdNum = Number(type_id);
+      if (!Number.isFinite(typeIdNum)) return res.status(400).json({ error: "type_id must be a number" });
+      if (!(await existsType(typeIdNum))) return res.status(400).json({ error: "Invalid type_id" });
+      fields.type_id = typeIdNum;
+    }
+
+    if (status_id !== undefined) {
+      const statusIdNum = Number(status_id);
+      if (!Number.isFinite(statusIdNum)) return res.status(400).json({ error: "status_id must be a number" });
+      if (!(await existsStatus(statusIdNum))) return res.status(400).json({ error: "Invalid status_id" });
+      fields.status_id = statusIdNum;
+    }
+
+    if (price !== undefined) {
+      const priceNum = Number(price);
+      if (!Number.isFinite(priceNum) || priceNum < 0) return res.status(400).json({ error: "price must be a positive number" });
+      fields.price = priceNum;
+    }
+
+    if (age !== undefined && age !== null && age !== "") {
+      const ageNum = Number(age);
+      if (!Number.isFinite(ageNum) || ageNum < 0) return res.status(400).json({ error: "age must be a positive number" });
+      fields.age = ageNum;
+    } else if (age === null || age === "") {
+      fields.age = null;
+    }
+
+    if (description !== undefined) fields.description = description || null;
+    if (history !== undefined)     fields.history     = history || null;
+    if (origin !== undefined)      fields.origin      = origin || null;
+    if (image !== undefined)       fields.image       = image || null;
+
+    if (Object.keys(fields).length === 0) {
+      return res.status(400).json({ error: "No fields to update" });
+    }
+
+    const updated = await updateArtifactById(id, userId, fields);
+    if (!updated) return res.status(404).json({ error: "Artifact not found" });
+
+    return res.json(updated);
   } catch (err) {
     next(err);
   }

@@ -5,7 +5,8 @@ import {
     listArtifacts, 
     getMyArtifacts, 
     createMyArtifact, 
-    deleteMyArtifact 
+    deleteMyArtifact,
+    updateMyArtifact,
 } from "../controllers/artifact.controller.js";
 
 const router = Router();
@@ -15,6 +16,7 @@ router.post("/", authMiddleware, createMyArtifact);
 
 router.get("/user", authMiddleware, withPagination(), getMyArtifacts);
 
+router.put("/:id", authMiddleware, updateMyArtifact); 
 router.delete("/:id", authMiddleware, deleteMyArtifact);
 
 export default router;

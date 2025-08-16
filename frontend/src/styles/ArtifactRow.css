@@ -121,3 +121,55 @@ p{
     scale: 1.25;
     transition: scale 0.1s ease;
 }
+
+.artifact-card .edit-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr; /* izq, medio, der */
+  gap: 16px 20px;
+  align-items: start;
+  padding-top: 8px;
+}
+
+.artifact-card .edit-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.artifact-card .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artifact-card .label {
+  font-size: 0.8rem;
+  letter-spacing: .05em;
+  opacity: .8;
+}
+
+.artifact-card .edit-grid .input-square,
+.artifact-card .edit-grid select,
+.artifact-card .edit-grid textarea {
+  width: 100%;
+  transform: none !important;
+  writing-mode: horizontal-tb !important;
+}
+
+.artifact-card .edit-grid textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.artifact-card .edit-grid .label,
+.artifact-card .edit-grid input,
+.artifact-card .edit-grid select,
+.artifact-card .edit-grid textarea {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .artifact-card .edit-grid {
+    grid-template-columns: 1fr;
+  }
+}
