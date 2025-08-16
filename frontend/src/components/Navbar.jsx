@@ -66,7 +66,6 @@ const Navbar = () => {
           <div className="navbar-nav ms-auto gap-3 text-white-custom text-spectral">
             <NavLink className="nav-link" to="/" end>Home</NavLink>
             <NavLink className="nav-link" to="/artifacts">Artifacts</NavLink>
-            <NavLink className="nav-link" to="/collections">Collections</NavLink>
             
             {token && (<><NavLink className="nav-link" to="/profile">My Profile</NavLink></>)}
 
