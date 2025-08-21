@@ -13,7 +13,7 @@ const sign = (payload) =>
 const login = async (req, res) => {
   try {
     const { email = "", password = "" } = req.body;
-
+    
     if (!email.trim() || !password.trim())
       return res.status(400).json({ error: "Email and password are required" });
     if (!isValidEmail(email))
@@ -24,14 +24,14 @@ const login = async (req, res) => {
         .json({ error: "Password must be at least 6 characters" });
 
     const user = await authModel.getUserByEmail(email);
-    if (!user) return res.status(400).json({ error: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(400).json({ error: "Invalid password" });
 
     const token = sign({ email: user.email, id: user.id, role: user.role });
     return res.json({ email: user.email, token });
-  } catch {
+  } catch (error){
     console.error("Login failed:", error?.response?.data);
     return res.status(500).json({ error: "Server error" });
   }
