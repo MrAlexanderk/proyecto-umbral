@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useState, useContext } from "react";
 import { Form } from "react-bootstrap";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";

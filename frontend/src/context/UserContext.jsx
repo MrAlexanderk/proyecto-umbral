@@ -20,9 +20,9 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      setAuthHeader(token);
     } else {
-      delete api.defaults.headers.common.Authorization;
+      setAuthHeader(null);
     }
   }, [token]);
 
@@ -42,7 +42,6 @@ export const UserProvider = ({ children }) => {
       const { token: jwt, email: serverEmail } = data;
 
       setAuthHeader(jwt);
-
       setToken(jwt);
       setEmail(serverEmail);
       localStorage.setItem("token", jwt);
@@ -50,8 +49,13 @@ export const UserProvider = ({ children }) => {
 
       return true;
     } catch (error) {
-      console.error("Login failed:", error?.response?.data || error.message);
-      throw error;
+      const message =
+        error?.response?.data?.message ||
+        (error?.response?.status === 401
+          ? "Invalid email or password"
+          : "Login failed. Please try again.");
+      console.error("Login failed:", message);
+      throw new Error(message);
     }
   };
 
@@ -61,7 +65,6 @@ export const UserProvider = ({ children }) => {
       const { token: jwt, email: serverEmail } = data;
 
       setAuthHeader(jwt);
-
       setToken(jwt);
       setEmail(serverEmail);
       localStorage.setItem("token", jwt);
@@ -69,8 +72,11 @@ export const UserProvider = ({ children }) => {
 
       return true;
     } catch (error) {
-      console.error("Registration failed:", error?.response?.data || error.message);
-      throw error;
+      const message =
+        error?.response?.data?.message ||
+        "Registration failed. Please check your input.";
+      console.error("Registration failed:", message);
+      throw new Error(message);
     }
   };
 
@@ -85,8 +91,9 @@ export const UserProvider = ({ children }) => {
 
   const getProfile = useCallback(async () => {
     try {
-      if(!token) return null;
+      if (!token) return null;
       if (user) return user;
+
       const { data } = await api.get("/auth/me");
       setUser(data);
       return data;
@@ -94,26 +101,28 @@ export const UserProvider = ({ children }) => {
       if (error?.response?.status === 401) {
         logout();
       }
-      console.error("Failed to fetch profile:", error?.response?.data || error.message);
-      return null;
+      const message =
+        error?.response?.data?.message || "Failed to fetch profile.";
+      console.error(message);
+      throw new Error(message);
     }
   }, [user, token]);
 
   const getArtifactsFromUser = async () => {
     try {
-      // Evita llamar si no hay token
       if (!token) return [];
       const { data } = await api.get("/artifacts/user");
-      return data; // array de artefactos
+      return data;
     } catch (error) {
-      console.error("Failed to fetch artifacts:", error?.response?.data || error.message);
-      return [];
+      const message =
+        error?.response?.data?.message || "Failed to fetch user artifacts.";
+      console.error(message);
+      throw new Error(message);
     }
   };
 
   const updateProfile = async (updatedData) => {
     try {
-
       const { data } = await api.put("/auth/me", updatedData);
 
       if (data?.email) {
@@ -123,18 +132,17 @@ export const UserProvider = ({ children }) => {
       setUser((prev) => ({ ...(prev || {}), ...data }));
       return data;
     } catch (error) {
-      console.error("Update profile failed:", error?.response?.data || error.message);
-      throw error;
+      const message =
+        error?.response?.data?.message || "Update profile failed.";
+      console.error(message);
+      throw new Error(message);
     }
   };
 
-  const getTypeNameById = useCallback(
-    async (id) => {
-      const found = CATEGORIES.find((cat) => cat.id === Number(id));
-      return found ? found.label : null;
-    },
-    []
-  );
+  const getTypeNameById = useCallback(async (id) => {
+    const found = CATEGORIES.find((cat) => cat.id === Number(id));
+    return found ? found.label : null;
+  }, []);
 
   return (
     <UserContext.Provider
@@ -149,7 +157,7 @@ export const UserProvider = ({ children }) => {
         loading,
         updateProfile,
         getArtifactsFromUser,
-        getTypeNameById
+        getTypeNameById,
       }}
     >
       {children}

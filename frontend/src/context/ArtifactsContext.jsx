@@ -9,7 +9,6 @@ import {
 } from "react-icons/gi";
 import { FaBookDead, FaMicrochip, FaQuestionCircle } from "react-icons/fa";
 
-// Categorías locales (las migraré a DB más adelante porque no sé qué hacer con los íconos jajajja)
 export const CATEGORIES = [
   { id: 1, label: "Dolls",    icon: GiSkeleton,      to: "/category/dolls" },
   { id: 2, label: "Mirrors",  icon: GiMirrorMirror,  to: "/category/mirrors" },
@@ -49,42 +48,29 @@ export const ArtifactsProvider = ({ children }) => {
       setArtifacts(data);
       return data;
     } catch (error) {
-      console.error("Failed to fetch artifacts:", error?.response?.data || error.message);
-      return artifacts;
+      const message =
+        error?.response?.data?.message || "Failed to fetch artifacts.";
+      console.error(message);
+      throw new Error(message);
     }
-  }, [artifacts]);
+  }, []);
 
   const getMyArtifacts = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return [];
+      if (!token) throw new Error("Not authenticated");
 
       const { data } = await api.get("/artifacts/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
       return data;
     } catch (error) {
-      console.error("Failed to fetch my artifacts:", error?.response?.data || error.message);
-      return [];
+      const message =
+        error?.response?.data?.message || "Failed to fetch your artifacts.";
+      console.error(message);
+      throw new Error(message);
     }
   }, []);
-
-  const removeArtifact = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Not authenticated");
-
-    await api.delete(`/artifacts/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    setArtifacts((prev) => prev.filter((a) => a.id !== id));
-    return true;
-  } catch (error) {
-    console.error("Failed to remove artifact:", error?.response?.data || error.message);
-    throw error;
-  }
-};
 
   const addArtifact = async (artifactData) => {
     try {
@@ -98,8 +84,10 @@ export const ArtifactsProvider = ({ children }) => {
       setArtifacts((prev) => [data, ...prev]);
       return data;
     } catch (error) {
-      console.error("Failed to add artifact:", error?.response?.data || error.message);
-      throw error;
+      const message =
+        error?.response?.data?.message || "Failed to add artifact.";
+      console.error(message);
+      throw new Error(message);
     }
   };
 
@@ -113,14 +101,33 @@ export const ArtifactsProvider = ({ children }) => {
       });
 
       setArtifacts((prev) => prev.map((a) => (a.id === id ? data : a)));
-      
       return data;
     } catch (error) {
-      console.error("Failed to update artifact:", error?.response?.data || error.message);
-      throw error;
+      const message =
+        error?.response?.data?.message || "Failed to update artifact.";
+      console.error(message);
+      throw new Error(message);
     }
   };
 
+  const removeArtifact = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Not authenticated");
+
+      await api.delete(`/artifacts/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setArtifacts((prev) => prev.filter((a) => a.id !== id));
+      return true;
+    } catch (error) {
+      const message =
+        error?.response?.data?.message || "Failed to remove artifact.";
+      console.error(message);
+      throw new Error(message);
+    }
+  };
 
   return (
     <ArtifactsContext.Provider
@@ -130,13 +137,13 @@ export const ArtifactsProvider = ({ children }) => {
         getAllArtifacts,
         getMyArtifacts,
         addArtifact,
+        updateArtifact,
+        removeArtifact,
         categories: CATEGORIES,
         getCategories,
         getCategoryById,
         getCategoryLabelById,
         getCategoryIconById,
-        removeArtifact,
-        updateArtifact,
       }}
     >
       {children}
