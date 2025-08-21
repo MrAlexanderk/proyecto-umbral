@@ -24,7 +24,7 @@ const login = async (req, res) => {
         .json({ error: "Password must be at least 6 characters" });
 
     const user = await authModel.getUserByEmail(email);
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) return res.status(400).json({ error: "User not found" });
 
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(400).json({ error: "Invalid password" });
@@ -111,7 +111,7 @@ const updateMe = async (req, res) => {
       fields.password_hash = await bcrypt.hash(password, 10);
     }
 
-    // Si no hay nada que actualizar, devuelve el perfil actual
+
     if (Object.keys(fields).length === 0) {
       const me = await authModel.getUserById(req.user.id);
       return res.json(me);
@@ -120,7 +120,7 @@ const updateMe = async (req, res) => {
     const updated = await authModel.updateUser(req.user.id, fields);
     return res.json(updated);
   } catch (err) {
-    if (err?.code === "23505") { // unique_violation (email)
+    if (err?.code === "23505") {
       return res.status(409).json({ error: "Email already exists" });
     }
     console.error("UPDATE_ME_ERROR:", err);
