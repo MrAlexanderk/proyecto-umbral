@@ -14,11 +14,11 @@ app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 
 // Healthcheck
-app.get('/api/health', (req, res) => res.json({ ok: true, service: 'embrujados-api' }));
+app.get('/health', (req, res) => res.json({ ok: true, service: 'embrujados-api' }));
 
 // Rutas de la API
-app.use('/api/auth', authRoutes);
-app.use('/api/artifacts', artifactRoutes);
+app.use('/auth', authRoutes);
+app.use('/artifacts', artifactRoutes);
 
 // 404 + handler de errores
 app.use(notFound);
