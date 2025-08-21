@@ -50,10 +50,7 @@ export const UserProvider = ({ children }) => {
       return true;
     } catch (error) {
       const message =
-        error?.response?.data?.message ||
-        (error?.response?.status === 401
-          ? "Invalid email or password"
-          : "Login failed. Please try again.");
+        error?.response?.data?.message || "Login failed. Please try again.";
       console.error("Login failed:", message);
       throw new Error(message);
     }
