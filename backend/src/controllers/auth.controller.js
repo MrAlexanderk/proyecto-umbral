@@ -32,6 +32,7 @@ const login = async (req, res) => {
     const token = sign({ email: user.email, id: user.id, role: user.role });
     return res.json({ email: user.email, token });
   } catch {
+    console.error("Login failed:", error?.response?.data);
     return res.status(500).json({ error: "Server error" });
   }
 };
