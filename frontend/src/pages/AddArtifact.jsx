@@ -9,6 +9,7 @@ import { useArtifacts } from '../context/ArtifactsContext';
 import '../styles/SignUp.css';
 import '../styles/Buttons.css';
 import ArtifactVisual from '../components/ArtifactVisual';
+import defaultHero from '../assets/hero.jpg';
 
 const MySwal = withReactContent(Swal);
 
@@ -67,7 +68,7 @@ const AddArtifact = () => {
     history:
       artifactHistory ||
       'Include a brief and REALISTIC history of the artifact.',
-    image: artifactImage || '../../src/assets/hero.jpg',
+    image: artifactImage || defaultHero,
     seller: profile?.username || 'Unknown Seller',
   };
 
@@ -88,7 +89,7 @@ const AddArtifact = () => {
       price: Number(artifactPrice),
       age: artifactAge,
       origin: artifactOrigin,
-      image_url: String(artifactImage),
+      image: artifactImage.trim(),
     };
 
     try {
