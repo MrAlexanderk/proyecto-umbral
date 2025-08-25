@@ -15,7 +15,6 @@ const ArtifactList = () => {
     let mounted = true;
 
     const fetchArtifacts = async () => {
-      // Si no hay token, no intentes llamar al endpoint privado
       if (!token) {
         if (mounted) {
           setArtifacts([]);

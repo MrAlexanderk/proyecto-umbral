@@ -88,7 +88,7 @@ const AddArtifact = () => {
       price: Number(artifactPrice),
       age: artifactAge,
       origin: artifactOrigin,
-      image_url: artifactImage,
+      image_url: String(artifactImage),
     };
 
     try {
