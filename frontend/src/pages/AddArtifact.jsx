@@ -342,59 +342,44 @@ const AddArtifact = () => {
             )}
           </div>
 
-          {/* Artifact Image */}
-          <label className="text-md text-gray-custom">
-            Artifact Image
-          </label>
-          <div
-            className="d-flex justify-content-left add-image-container"
-            style={{ alignItems: 'center', gap: '10px' }}
-          >
-            <input
-              type="file"
-              accept="image/*"
-              id="artifactImageInput"
-              style={{ display: 'none' }}
-              onChange={handleImageChange}
-              onBlur={() =>
-                setTouched((prev) => ({
-                  ...prev,
-                  artifactImage: true,
-                }))
-              }
-            />
-
-            <button
-              type="button"
-              className="btn-secondary mt-3 text-s text-white-custom add-image-btn"
-              onClick={() => {
-                document.getElementById('artifactImageInput').click();
-                setTouched((prev) => ({
-                  ...prev,
-                  artifactImage: true,
-                }));
-              }}
-            >
-              Select Image
-            </button>
-
-            <div className="d-flex flex-row align-items-center m-0 p-0">
-              <p className="text-md m-0 p-0">
-                {artifactImage
-                  ? 'Image loaded ✅'
-                  : 'Image not loaded.'}
-              </p>
+          {/* Artifact Image (ahora URL en lugar de archivo) */}
+          <div className="form-row mb-3">
+            <label className="text-md">Artifact Image (URL)</label>
+            <div className="input-icon-group">
+              <input
+                type="text"
+                placeholder="Paste the image URL here"
+                value={artifactImage || ""}
+                onChange={(e) => setArtifactImage(e.target.value)}
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, artifactImage: true }))
+                }
+              />
+              {touched.artifactImage &&
+                (artifactImage ? (
+                  <FaCheckCircle className="icon success" />
+                ) : (
+                  <FaTimesCircle className="icon error" />
+                ))}
             </div>
+            {touched.artifactImage && !artifactImage && (
+              <p className="text-detail-error mb-0 text-danger">
+                *Artifact Image URL required
+              </p>
+            )}
           </div>
-          {!artifactImage ? (
-            <p className="text-detail-error mb-0 text-danger">
-              *Artifact Image is required
-            </p>
-          ) : (
-            <p className="text-s">
-              <em>Image loaded: {artifactImageName}</em>
-            </p>
+
+          {/* Preview de la imagen */}
+          {artifactImage && (
+            <div className="preview-container mt-2">
+              <img
+                src={artifactImage}
+                alt="Artifact Preview"
+                style={{ maxWidth: "200px", borderRadius: "8px" }}
+              />
+            </div>
           )}
+
 
           <hr className="divider" />
 
